@@ -1,0 +1,69 @@
+<form class="registrar_form form" name="form_Crear_Actividad" action="" method="post">
+	<h3>Crear Actividad</h3>
+	<fieldset>
+		<legend>Caracteristicas de la actividad</legend>
+		<div>
+			<label for="nombreActic">Nombre: </label>
+			<input id="nombreActic" class="txt" type="text" name="txtNombre" placeholder="Nombre de la actividad" onkeypress="return soloLetras(event);" required>
+		</div>
+		<div>
+			<label for="tipo">Tipo: </label>
+			<select class="list" name="lstTipo" required>
+				<option value="">Seleccionar</option>
+			{% for tipo_actividad in tipos %}
+				<option value="{{tipo_actividad.id}}">{{tipo_actividad.nombre}}</option>
+			{% endfor %}
+			</select>
+		</div>
+		<div>
+			<label for="nivel">Nivel: </label>
+			<select class="list" name="lstNivel" required>
+				<option value="">Seleccionar</option>
+			{% for nivel_actividad in niveles %}
+				<option value="{{nivel_actividad.id}}">{{nivel_actividad.nombre}}</option>
+			{% endfor %}
+			</select>
+		</div>
+	</fieldset>
+	<div>
+		<button class="boton-on" id="crearActividad">Crear</button>
+	</div>
+</form>
+{% block scripts_body %}
+	<script>
+		$("#crearActividad").on('click', enviarCrearActividad)
+
+		function enviarCrearActividad(e) {
+			e.preventDefault();
+			var $nombre = $('input[name=txtNombre'), 
+					$tipo = $('select[name=lstTipo]'),
+					$nivel = $('select[name=lstNivel]')
+			if ($nombre.val() != '' && $tipo.val() != '' && $nivel.val() != '') {
+				if (validarString('Nombre', $nombre.val())) {
+					var	datos = {
+						nombre: $nombre.val(), 
+						tipo: $tipo.val(), 
+						nivel: $nivel.val()
+					}
+					$.post('crear-actividad/', datos , function(data, textStatus, xhr) {
+						if (data.estado == 0) {
+							alertify.error("¡Error al crear actividad!")
+						}else if (data.estado == 1){
+							alertify.success("¡Actividad Creada!")
+							$nombre.val('')
+							$tipo.val('')
+							$nivel.val('')
+						}else if (data.estado == 2){
+							alertify.error("¡Ya existe esta actividad!")
+							$nombre.val('')
+							$tipo.val('')
+							$nivel.val('')
+						}
+					})
+				}
+			}else {
+				alertify.log("¡Seleccione y complete todos los campos!")
+			}
+		}
+	</script>
+{% endblock scripts_body %}

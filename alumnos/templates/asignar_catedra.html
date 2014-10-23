@@ -1,0 +1,60 @@
+<div id="catedra">
+	<fieldset class="center-text">
+		<div class="center-text">
+			<select id="" class="list large" name="lstClase" required>
+				<option value="">Seleccionar</option>
+			{% for horario in horarios %}
+				<option value="{{horario.id}}">{{horario.clase.catedra.nombre}} {{horario.clase.nivel.nombre}} {{horario.clase.seccion.nombre}}</option>
+			{% endfor %}
+			</select>
+		</div>
+		<fieldset class="transparente">
+			<legend>Horario</legend>
+			<label id="horario" class="label-mostrar"></label>
+		</fieldset>
+	</fieldset>
+	<div>
+		<button class="boton-on" id="asignarCatedra">Asignar</button>
+	</div>
+</div>
+<script>
+	var $catedra = $('select[name=lstClase]'),
+			$horario = $('#horario')
+	
+	$catedra.on('change', buscarHorario)
+
+	$('#asignarCatedra').on('click', function(e) {
+		e.preventDefault()
+		if ($catedra.val() != "" && $horario.html() != "") {
+			var datos = {
+				alumno: $('#hdnId').val(),
+				clase: $horario.attr('clase-id'),
+				horario: $horario.attr('data-id')
+			}
+			$.post('asignar-catedra/', datos, function(data, textStatus, xhr) {
+				if (data.estado == 0) {
+					alertify.error("¡Error al asignar catedra!")
+				}else if (data.estado == 1){
+					alertify.success("¡Cátedra Asignada!")
+				}else if (data.estado == 2){
+					alertify.error("¡Catedra ya asignada!")
+				}else if (data.estado == 3){
+					alertify.log("¡No hay cupo!")
+				}
+			})
+		}else {
+			alertify.log("¡Seleccione una opción!")
+		}
+	})
+
+	function buscarHorario(e){
+		$horario.html("").attr('data-id', '');
+		if ($catedra.val()) {
+			$.get('buscar-horario/' + $catedra.val(), function(data) {
+				$horario.html(data.dia +' <span class="gris_oscuro">de</span> '+ data.desde +' <span class="gris_oscuro">a</span> '+ data.hasta)
+				$horario.attr('data-id', data.id)
+				$horario.attr('clase-id', data.clase)
+			})
+		}
+	}
+</script>

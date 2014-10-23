@@ -1,0 +1,39 @@
+{% extends "base_pdf_horizontal.html" %}
+{% block header %}
+	{% if instrumento == 'todos' %}
+		<h1>Listado de todos los alumnos</h1>
+	{% else %}
+		<h1>Alumnos de {{instrumento}}</h1>
+	{% endif %}
+	{% if nivel == 'todos' %}
+		<h2>Todos los Niveles</h2>
+	{% else %}
+		<h2>Nivel {{nivel}}</h2>
+	{% endif %}
+{% endblock header %}
+{% block header_table %}
+	<th width="50px">Nº</th>
+	<th width="380px">Nombres y Apellidos</th>
+	<th width="100px">Cédula</th>
+	<th width="100px">Fecha N.</th>
+	<th width="60px">Edad</th>
+	<th width="60px">Sexo</th>
+	<th width="130px">Instrumento</th>
+	<th width="100px">Nivel</th>
+{% endblock header_table %}
+{% block content %}
+	{% if alumnos %}
+		{% for alumno in alumnos %}
+			<tr>
+				<td width="50px">{{alumno.num}}</td>
+				<td width="380px">{{alumno.nombre}}</td>
+				<td width="100px">{{alumno.cedula}}</td>
+				<td width="100px">{{alumno.fecha|date:'d-m-Y'}}</td>
+				<td width="60px">{{alumno.edad}}</td>
+				<td width="60px">{{alumno.sexo}}</td>
+				<td width="130px">{{alumno.instrumento}}</td>
+				<td width="100px">{{alumno.nivel}}</td>
+			</tr>
+		{% endfor %}
+	{% endif %}
+{% endblock content %}

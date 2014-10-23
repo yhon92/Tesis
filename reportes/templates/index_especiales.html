@@ -1,0 +1,46 @@
+<form class="registrar_form form" name="form_Reportes_Especiales" action="" method="post">
+	<h3>Criterios de Selección</h3>
+	<div id="buscador">
+		<fieldset>
+			<legend>Por</legend>
+			<select id="reporte" class="list large" name="lstReporte" required>
+				<option value="">Seleccione</option>
+				<option value="actividad">Actividad</option>
+				<option value="catedra">Cátedra</option>
+				{# <option value="clase">Clase</option> #}
+				<option value="fechas">Fechas</option>				
+				<option value="instrumento">Instrumento</option>
+			</select>
+		</fieldset>
+	</div>
+</form>
+<div id="mostrar" class=""></div>
+{% block scripts_body %}
+	<script>
+		$('select[name=lstReporte]').on('change', function(e) {
+			e.preventDefault();
+			$opcion = $(this).val()
+			if (!$opcion) {
+				$('#mostrar').html('')
+			}else {
+				$('#mostrar').load('cargar-opcion/', {'template': $opcion+'.html'});
+			}
+		})
+
+		function nuevaPestana(url, datos) {
+			urlcompleta = url
+			$.each(datos, function(i, valor) {
+				urlcompleta = urlcompleta + valor +'/'
+			})
+			$.get(urlcompleta+'Comprobar/', function(data) {
+				if (data.estado == 1){
+					window.open(urlcompleta+'Imprimir/', '_blank', "directories=no, location=no, menubar=no, scrollbars=yes, statusbar=no, tittlebar=no, width=1100, height=750")
+					return false
+				}else if (data.estado == 3){
+					alertify.log("¡No hay datos que mostrar!")
+				}
+			})
+			return false
+		}
+	</script>
+{% endblock scripts_body %}

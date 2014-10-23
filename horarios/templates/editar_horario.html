@@ -1,0 +1,102 @@
+<div>
+	<form class="registrar_form form" name="form_Crear_Horario" action="" method="post">
+		<h3>Editar Horario Clase</h3>
+		<fieldset class="center-text">
+			<legend>Seleccione una Clase</legend>
+			<div class="center-text">
+				<select id="" class="list large" name="lstClase" required>
+					<option value="">Seleccionar</option>
+				{% for horario in horarios %}
+					<option value="{{horario.id}}">{{horario.clase.catedra.nombre}} {{horario.clase.nivel.nombre}} {{horario.clase.seccion.nombre}}</option>
+				{% endfor %}
+				</select>
+			</div>
+		</fieldset>
+	</form>
+</div>
+<div id="mostrar" class="none">
+	<fieldset>
+		<legend>Características de la clase</legend>
+		<div>
+			<label for="dia" class="block">Dia:</label>
+			<select id="dia" class="list large" name="lstDia" required>
+				<option value="">Seleccionar</option>
+				{% for dia in dias %}
+					<option value="{{dia.id}}">{{dia.nombre}}</option>				
+				{% endfor %}
+			</select>
+		</div>
+		<div>
+			<label for="desde">Hora Desde:</label>
+			<div class="input-append bootstrap-timepicker">
+				<input type="text" class="txt short inline-block" name="txtHoraDesde" autocomplete="off" onkeydown="return ningunaTecla(event);">
+				<span class="add-on"><i class="icon-time"></i></span>
+			</div>
+		</div>
+		<div>
+			<label for="hasta">Hora Hasta:</label>
+			<div class="input-append bootstrap-timepicker">
+				<input type="text" class="txt short inline-block" name="txtHoraHasta" autocomplete="off" onkeydown="return ningunaTecla(event);">
+				<span class="add-on"><i class="icon-time"></i></span>
+			</div>
+		</div>
+	</fieldset>
+	<div>
+		<button class="boton-on" id="guardarHorarioClase">Guarda</button>
+	</div>
+</div>
+{% block scripts_body %}
+	<script>
+		$('input[name=txtHoraDesde').timepicker()
+		$('input[name=txtHoraHasta').timepicker()
+		
+		var $clase = $('select[name=lstClase]'),
+				$dia = $('select[name=lstDia]'),
+				$desde = $('input[name=txtHoraDesde'),
+				$hasta = $('input[name=txtHoraHasta')
+
+		$('select[name=lstClase]').on('change', buscarHorario)
+		$('#guardarHorarioClase').on('click', enviarGuardarHorarioClase)
+
+		function enviarGuardarHorarioClase(e) {
+			e.preventDefault()
+			if ($clase.val() != '' && $dia.val() != '' && $desde.val() != '' && $hasta.val() != '') {
+				if (validarHoras($desde.val(), $hasta.val())) {
+					var	datos = {
+						id: $clase.val(),
+						dia: $dia.val(), 
+						desde: $desde.val(), 
+						hasta: $hasta.val()
+					}
+					$.post('guardar-horario/', datos , function(data, textStatus, xhr) {
+						if (data.estado == 0) {
+							alertify.error("¡Error al guardar los datos!")
+						}else if (data.estado == 1){
+							alertify.success("¡Horario Editado!")
+						}else if (data.estado == 3){
+							alertify.log("¡No hubo modificación!")
+						}
+					})
+				}
+			}else {
+				alertify.log("¡Seleccione y complete todos los campos!")
+			}
+		}
+
+		function buscarHorario(e){
+			$id = $(this).val() 
+			if (!$id) {
+				$('#mostrar').addClass('none')
+			}else{
+				$.get('buscar-horario/' + $id, mostrarDatos)
+			}
+		}
+
+		function mostrarDatos(datos) {
+			$dia.val(datos.dia)
+			$desde.val(datos.desde)
+			$hasta.val(datos.hasta)
+			$('#mostrar').removeClass('none')
+		}
+	</script>
+{% endblock scripts_body %}

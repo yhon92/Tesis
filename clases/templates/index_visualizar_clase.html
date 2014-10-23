@@ -1,0 +1,33 @@
+<div>
+	<form class="buscar_form form" name="form_Buscar" action="" method="post">
+		<h3>Visualizar Clase</h3>
+		<fieldset>
+			<legend>Selecione una Clase</legend>
+			<select id="catedra" class="list large" name="lstClase" required>
+				<option value="">Seleccionar</option>
+			{% if clases %}
+				{% for clase in clases %}
+					<option value="{{clase.id}}">{{clase.catedra.nombre}} {{clase.nivel.nombre}} {{clase.seccion.nombre}}</option>
+				{% endfor %}
+			{% endif %}
+			</select>
+		</fieldset>
+	</form>
+</div>
+<div id="mostrar" class=""></div>
+{% block scripts_body %}
+<script>
+	var $clase = $('select[name=lstClase]')
+
+	$($clase).on('change', buscarClase)
+
+	function buscarClase() {
+		var $id = $(this).val()
+		if (!$id) {
+			$('#mostrar').html('')
+		}else{
+			$('#mostrar').load('buscar-visualizar-clase/'+ $id);
+		}
+	}
+</script>
+{% endblock scripts_body %}

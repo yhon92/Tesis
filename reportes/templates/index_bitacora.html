@@ -1,0 +1,135 @@
+<form class="registrar_form form" name="form_Reportes_Especiales" action="" method="post">
+	<h3>Bitácora del Sistema</h3>
+	<div class="por">
+		<fieldset id="fechas" class="">
+			<legend>Criterios</legend>
+			<div class="inline-block">
+				<label for="usuario">Usuario:</label>
+				<select class="list" name="lstUsuario" id="usuario">
+					<option value="todos">Todos</option>
+				{% for usuario in usuarios %}
+					<option value="{{usuario.id}}">{{usuario.username}}</option>
+				{% endfor %}
+				</select>
+			</div>
+			<div class="inline-block">
+				<label class="block" for="modulo">Módulo:</label>
+				<select class="list" name="lstModulo" id="modulo">
+					<option value="todos">Todos</option>
+					{% for modulo in modulos %}
+					<option value="{{modulo.modulo}}">{{modulo.modulo}}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div class="inline-block">
+				<label class="block" for="acción">Acción:</label>
+				<select class="list" name="lstAccion" id="acción">
+					<option value="todos">Todos</option>
+				</select>
+			</div>
+			<div class="center-text">
+				<div class="inline-block">
+					<label for="desde">Desde:</label>
+					<input id="desde" class="caldr" type="text" name="txtDesde" placeholder="Haga Click" autocomplete="off" onkeydown="return ningunaTecla(event);" required>
+				</div>
+				<div class="inline-block">
+					<label for="hasta">Hasta:</label>
+					<input id="hasta" class="caldr" type="text" name="txtHasta" placeholder="Haga Click" autocomplete="off" onkeydown="return ningunaTecla(event);" required>
+				</div>
+				<div class="inline-block center-text">
+					<button class="boton-on" id="mostrarBitacora">Mostrar</button>
+				</div>
+				<div class="inline-block center-text">
+					<button class="boton-off" id="mostrarBitacoraPdf">PDF</button>
+				</div>
+			</div>
+		</fieldset>
+	</div>
+</form>
+<div id="mostrar" class=""></div>
+{% block scripts_body %}
+	<script>
+		$('input[name=txtDesde').val(moment().format('DD-MM-YYYY'))
+		$('input[name=txtHasta').val(moment().format('DD-MM-YYYY'))
+
+		$('select[name=lstModulo]').on('change', function(e) {
+			e.preventDefault();
+			var $lstAccion = $('select[name=lstAccion]')
+			$modulo = $(this).val()
+			if ($modulo != "todos") {
+				var datos = {
+					modulo: $modulo
+				}
+				$.post('cargar-combo/', datos, function(data, textStatus, xhr) {
+					$lstAccion.empty();
+					$lstAccion.append('<option value="todos">Todos</option>')
+					$.each(data.acciones, function(i, valor) {
+						console.log(valor.accion)
+						$lstAccion.append('<option value="'+ valor.accion +'">'+ valor.accion +'</option>')
+					})
+				})
+			}else{
+				$lstAccion.empty();
+				$lstAccion.append('<option value="todos">Todos</option>')
+			}
+		})
+		$('#mostrarBitacora').on('click', visualizarBitacora)
+		$('#mostrarBitacoraPdf').on('click', pdfBitacora)
+
+		function visualizarBitacora (e) {
+			e.preventDefault();
+			enviarBitacora('visualizar')
+		}
+
+		function pdfBitacora (e) {
+			e.preventDefault();
+			enviarBitacora('pdf')
+		}
+
+		function enviarBitacora(tipo) {
+			var $usuario = $('select[name=lstUsuario]'), 
+					$modulo = $('select[name=lstModulo]'), 
+					$accion = $('select[name=lstAccion]'), 
+					$desde = $('input[name=txtDesde'),
+					$hasta = $('input[name=txtHasta')
+			if ($usuario.val() != "" && $modulo.val() != "" && $accion.val() != "" && $desde.val() != "" && $hasta.val() != "") {
+				if (compararFechas($desde.val(), $hasta.val())) {
+					url = 'buscar-visualizar-bitacora/'+ tipo+ '/'+ $usuario.val() +'/'+ $modulo.val() +'/'+ $accion.val() +'/'+ reconvertirFecha($desde.val()) +'/'+ reconvertirFecha($hasta.val() +'/')
+					if (tipo == 'visualizar') {
+						$('#mostrar').load(url +'/Imprimir/')
+					}else if (tipo == 'pdf') {
+						$.get(url+'/Comprobar/', function(data) {
+							if (data.estado == 1){
+								window.open(url+'/Imprimir/', '_blank', "directories=no, location=no, menubar=no, scrollbars=yes, statusbar=no, tittlebar=no, width=1100, height=750")
+								return false
+							}else if (data.estado == 3){
+								alertify.log("¡No hay datos que mostrar!")
+							}
+						})
+						return false
+					}
+				}
+			}else {
+				alertify.log("¡Dede establecer un rango de fecha!")
+			}
+		}
+
+		var picker = new Pikaday(
+		{
+			field: document.getElementById('desde'),
+			firstDay: 7,
+			maxDate: new Date(moment().format('YYYY-MM-DD')+1),
+			minDate: new Date('1950-01-01'),
+			yearRange: [1950,moment().format('YYYY')],
+		})
+
+		var picker = new Pikaday(
+		{
+			field: document.getElementById('hasta'),
+			firstDay: 7,
+			maxDate: new Date(moment().format('YYYY-MM-DD')+1),
+			minDate: new Date('1950-01-01'),
+			yearRange: [1950,moment().format('YYYY')],
+		})
+	</script>
+{% endblock scripts_body %}

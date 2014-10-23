@@ -1,0 +1,29 @@
+{% extends "base_pdf_horizontal.html" %}
+{% block style %}
+{% endblock style %}
+{% block header %}
+	<h1>Reporte de Bitácora</h1>
+	<p>del: <strong>{{desde|date:'d M Y'}}</strong> hasta: <strong>{{hasta|date:'d M Y'}}</strong></p>
+{% endblock header %}
+{% block header_table %}
+	<th width="50px">Nº</th>
+	<th width="100px">Usuario</th>
+	<th width="90px">Módulo</th>
+	<th width="110px">Fecha</th>
+	<th width="80px">Acción</th>
+	<th width="535px">Descripción</th>
+{% endblock header_table %}
+{% block content %}
+	{% if bitacoras %}
+		{% for bitacora in bitacoras %}
+			<tr>
+				<td width="50px">{{bitacora.num}}</td>
+				<td width="100px">{{bitacora.username}}</td>
+				<td width="90px">{{bitacora.modulo}}</td>
+				<td width="110px">{{bitacora.fecha|date:'d-m-Y h:i:s a'}}</td>
+				<td width="80px">{{bitacora.accion}}</td>
+				<td width="535px">{{bitacora.mensaje}}</td>
+			</tr>
+		{% endfor %}
+	{% endif %}
+{% endblock content %}

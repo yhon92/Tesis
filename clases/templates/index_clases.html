@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Clases{% endblock title %}
+{% block scripts_head %}
+<script src="{{ STATIC_URL }}js/validacion.js"></script>
+{% endblock scripts_head %}
+{% block contenido %}
+<section class="index_clase">
+	<div class="nav_modulos">
+		<a href="crear/">Crear</a>
+		<a href="visualizar/">Visualizar</a>
+		<a href="editar/">Editar</a>
+	</div>
+</section>
+<article id="contenedor_clase"></article>
+{% endblock contenido %}
+{% block scripts_body%}
+<script src="{{ STATIC_URL }}js/alertify.js"></script>
+<script src="{{ STATIC_URL }}js/jTPS.js"></script>
+<script src="{{ STATIC_URL }}js/clases.js"></script>
+{% endblock scripts_body %}

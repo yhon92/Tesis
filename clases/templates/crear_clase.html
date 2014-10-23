@@ -1,0 +1,88 @@
+<form class="registrar_form form" name="form_Crear_Catedra" action="" method="post">
+	<h3>Crear Clase</h3>
+	<fieldset>
+		<legend>Características de la clase</legend>
+		<div>
+			<label for="catedra">Catedra:</label>
+			<select id="catedra" class="list large" name="lstCatedra" required>
+				<option value="">Seleccionar</option>
+			{% for catedra in catedras %}
+				<option value="{{catedra.id}}">{{catedra.nombre}}</option>
+			{% endfor %}
+			</select>
+		</div>
+		<div>
+			<label for="profesor">Profesor:</label>
+			<select id="profesor" class="list large" name="lstProfesor" required>
+				<option value="">Seleccionar</option>
+			{% for profesor in profesores %}
+				<option value="{{profesor.id}}">{{profesor.nombres}} {{profesor.apellidos}}</option>				
+			{% endfor %}
+			</select>
+		</div>
+		<div>
+			<label for="nivel">Nivel:</label>
+			<select id="nivel" class="list" name="lstNivel" required>
+				<option value="">Seleccionar</option>
+			{% for nivel in niveles %}
+				<option value="{{nivel.id}}">{{nivel.nombre}}</option>
+			{% endfor %}
+			</select>
+		</div>
+		<div>
+			<label for="seccion">Sección:</label>
+			<select id="seccion" class="list" name="lstSeccion" required>
+				<option value="">Seleccionar</option>
+			{% for seccion in secciones %}
+				<option value="{{seccion.id}}">{{seccion.nombre}}</option>
+			{% endfor %}
+			</select>
+		</div>
+		<div>
+			<label for="cupo">Cupo:</label>
+			<input id="cupo" class="num" type="number" name="txtCupo" min="0" max="40" step="1" value="0" required>
+		</div>
+	</fieldset>
+	<div>
+		<button class="boton-on" id="crearClase">Crear</button>
+	</div>
+</form>
+{% block scripts_body %}
+	<script>
+		$("#crearClase").on('click', enviarCrearClase)
+
+		function enviarCrearClase(e) {
+			e.preventDefault()
+			var $catedra = $('select[name=lstCatedra]'), 
+					$profesor = $('select[name=lstProfesor]'),
+					$nivel = $('select[name=lstNivel]'),
+					$seccion = $('select[name=lstSeccion]'),
+					$cupos = $('input[name=txtCupo')
+			if ($catedra.val() != '' && $profesor.val() != '' && $nivel.val() != '' && $seccion.val() != '' && $cupos.val() != '') {
+				if (parseInt($cupos.val()) >= 10) {
+					var	datos = {
+						catedra: $catedra.val(), 
+						profesor: $profesor.val(), 
+						nivel: $nivel.val(), 
+						seccion: $seccion.val(), 
+						cupos: $cupos.val()
+					}
+					$.post('crear-clase/', datos , function(data, textStatus, xhr) {
+						if (data.estado == 0) {
+							alertify.error("¡Error al crear clase!")
+						}else if (data.estado == 1){
+							alertify.success("¡Clase Creada!")
+						}else if (data.estado == 2){
+							alertify.error("¡Ya existe esta clase!")
+						}
+					})
+				}else {
+					alertify.log("¡Cupo de ser minimo de 10!")
+				}
+			}else {
+				alertify.log("¡Seleccione y complete todos los campos!")
+			}
+			
+		}
+	</script>
+{% endblock scripts_body %}

@@ -1,0 +1,22 @@
+{% extends "admin/base.html" %}
+{# {% load i18n grp_tags %} #}
+{% load i18n %}
+{% block title %}{{ action_name }}{% endblock %}
+ 
+{% if not is_popup %}{% block breadcrumbs %}
+<div id="grp-context-navigation">
+  <nav id="grp-breadcrumbs">
+    <ul class="grp-horizontal-list">
+      <li><a href="/admin/">{% trans "Home" %}</a></li>
+      <li><a href="{% url 'index_backup' %}">Respaldar-Restaurar</a></li>
+      <li>{% block subaction %}{% endblock %}</li>
+      <!--<li><a id="logout" href="/admin/logout">Cerrar Sesión</a></li>-->
+    </ul>
+  </nav>
+</div>{% endblock %}{% endif %}
+  {% block content %}
+      <div id="content-main">
+      <h1>{{ action_name }}</h1>
+          {% block the_form %} {% endblock %}
+      </div>
+  {% endblock %}

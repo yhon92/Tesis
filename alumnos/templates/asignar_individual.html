@@ -1,0 +1,68 @@
+<div id="individual">
+	<fieldset>
+		<legend></legend>
+		<div>
+			<label for="instrumento">Instrumento:</label>
+			<select class="list" name="lstInstrumento" required>
+				<option value="">Seleccionar</option>
+					<optgroup label="Clásicos">	
+				{% for instrumento in instrumentos %}
+					<option value="{{instrumento.id}}">{{instrumento.nombre}}</option>
+				{% endfor %}
+					</optgroup>
+			</select>
+		</div>
+		<div>
+			<label for="profesor">Profesor:</label>
+			<select id="profesor" class="list large" name="lstProfesor" required>
+				<option value="">Seleccionar</option>
+			{% for profesor in profesores %}
+				<option value="{{profesor.id}}">{{profesor.nombres}} {{profesor.apellidos}}</option>
+			{% endfor %}
+			</select>
+		</div>
+		<div>
+			<label for="nivel">Nivel</label>
+			<select id="nivel" class="list" name="lstNivel" required>
+				<option value="">Seleccionar</option>
+				{% for nivel in niveles %}
+				<option value="{{nivel.id}}">{{nivel}}</option>
+				{% endfor %}
+			</select>
+		</div>
+	</fieldset>
+	<div>
+		<button class="boton-on" id="asignarClaseIndividual">Asignar</button>
+	</div>
+</div>
+<script>
+	var $instrumento = $('select[name=lstInstrumento]'),
+			$profesor = $('select[name=lstProfesor]'),
+			$nivel = $('select[name=lstNivel]')
+
+	$('#asignarClaseIndividual').on('click', function(e) {
+		e.preventDefault()
+		if ($instrumento.val() != "" && $profesor.val() != "" && $nivel.val() != "") {
+			var datos = {
+				alumno: $('#hdnId').val(),
+				instrumento: $instrumento.val(),
+				profesor: $profesor.val(),
+				nivel: $nivel.val()
+			}
+			$.post('asignar-clase-individual/', datos, function(data, textStatus, xhr) {
+				if (data.estado == 0) {
+					alertify.error("¡Error al asignar instrumento!")
+				}else if (data.estado == 1){
+					alertify.success("¡Instrumento Asignado!")
+					$instrumento.val("")
+					$profesor.val("")
+					$nivel.val("")
+				}else if (data.estado == 2){
+					alertify.error("¡Instrumento ya asignado!")
+				}
+			})
+		}else {
+			alertify.log("¡Seleccione todas las opciones!")
+		}
+	})
+</script>

@@ -1,0 +1,21 @@
+/* Aqqui va el titulo de la pag y el https:// dominio donde se encuentra */
+
+/* TEAM */
+	Creator: Oscar Y. Guevara
+	Contact: djyhon[at]hotmail.com
+	Twitter: OscarGuevara92
+	From: Lara, Venezuela
+	
+/* IN MEMORIAL */
+	dedicarle a un fallecido
+	
+/* THANKS */
+	para dar gracias a personas
+	o empresas y organizaciones
+	
+/* SITE */
+	Last update: 2013/11/30
+	Language: Español
+	Standars: HTML5, CSS3, JavaScript
+	Components: jQuery
+	Software: Notepad++

@@ -1,0 +1,152 @@
+{% block contenido %}
+<section>
+	<h3>Asignar Alumno</h3>
+	<div id="buscador" class="">
+		<form class="buscar_form form" name="form_Buscar" action="" method="post">
+			<fieldset class="relative">
+				<legend>Nombre y Apellido</legend>
+				<input id="buscador" class="txt" type="text" name="txtBuscador" placeholder="Ejm: Ricardo Ochoa" required onkeypress="return soloLetras(event);" autocomplete="off">
+				<div class="resultado none"></div>
+			</fieldset>
+		</form>
+	</div>
+	<div class="inline-block align-top contenedor-datos none-important" id="datos">
+		<fieldset>
+			<legend>Datos del Alumno</legend>
+			<input type="hidden" id="hdnId">
+			<div>
+				<label>Nombres:</label>
+				<label id="nombres" class="block label-mostrar"></label>
+			</div>
+			<div>
+				<label>Apellidos:</label>
+				<label id="apellidos" class="block label-mostrar"></label>
+			</div>
+			<div>
+				<label>Cédula:</label>
+				<label id="cedula" class="block label-mostrar"></label>
+			</div>
+<!-- 			<div>
+				<label>Sexo:</label>
+				<label id="sexo" class="block label-mostrar"></label>
+			</div>
+			<div>
+				<label>Fecha de Nacimiento:</label>
+				<label id="fechaNacimiento" class="block label-mostrar"></label>
+			</div>
+			<div> -->
+				<label>Estado:</label>
+				<label id="estado" class="block label-mostrar"></label>
+			</div>
+		</fieldset>
+	</div>
+	<div class="center inline-block contenedor-asignaciones none-important" id="asignaciones">
+		<ul class="tabs_nav">
+			<li><a class="activo" href="individual/" indent="">Individual</a></li>
+			<li><a href="actividad/" >Actividad</a></li>
+			<li><a href="catedra/">Cátedra</a></li>
+			<li><a href="tallas/">Tallas</a></li>
+		</ul>
+		<div class="tabs-content">
+		</div>
+	</div>
+</section>
+{% endblock contenido %}
+{% block scripts_body %}
+<script>
+	var $buscador = $('input[name=txtBuscador]'),
+			$resultado = $('.resultado'),
+			$datos = $('#datos'),
+			$asignaciones = $('#asignaciones')
+	
+	$buscador.keyup(buscar)
+	$buscador.on('focus', buscar)
+
+	function buscar(e) {
+		if ($buscador.val() === '') {
+			$resultado.slideUp()
+			$datos.addClass('none-important')
+			$asignaciones.addClass('none-important')
+		}else{
+			if (recorrerString($buscador.val())) {
+				var datos = {
+					nombre: $buscador.val()
+				}
+				$.post('rastrear-alumno/', datos, function(data, textStatus, xhr) {
+					cargarResultado(data)
+				})
+			}
+		}
+	}
+
+	function cargarResultado (data) {
+		var $div = $('<div>'),
+				$a = $('<a class="block">')
+
+		$resultado.html('')
+
+		if (data.alumnos.length != 0) {
+			$.each(data.alumnos, function(i, valor) {
+				$('<a class="block item" data-id="'+valor.id+'">').html(valor.nombres +' '+ valor.apellidos).appendTo($div)
+			})
+		} else {
+			$('<a class="block item center-text">').html('No hay resultado').appendTo($div)
+		}
+
+		$div.appendTo($resultado)
+		$resultado.slideDown()
+
+		$('.item').on('click', buscarDatos)
+	}
+
+	function buscarDatos(e) {
+		e.preventDefault()
+		$resultado.hide()
+		$id = $(this).attr('data-id')
+		$.get('buscar-asignar-alumno/' + $id, mostrarDatos)
+	}
+
+	function mostrarDatos (data) {
+		$('#hdnId').val(data.id)
+		$('#nombres').html(data.nombres)
+		$('#apellidos').html(data.apellidos)
+		$('#cedula').html(data.cedula)
+		if (data.sexo === 'F') {
+			$('#sexo').html('Femenino')
+		}else{
+			$('#sexo').html('Masculino')
+		}
+		$('#edad').html('')
+		$('#fechaNacimiento').html(reconvertirFecha(data.fecha))
+		if (data.activo) {
+			$('#estado').html('Activo')
+			$('#asignaciones').removeClass('none-important')
+		}else{
+			$('#estado').html('Inactivo')
+			$('#asignaciones').addClass('none-important')
+		}
+		$('.tabs_nav li a').removeClass('activo')
+		$('.tabs-content').load('individual/' + $('#hdnId').val())
+		$('a[href="individual/"]').addClass('activo')
+		$datos.removeClass('none-important')
+
+	}
+
+	function reconvertirFecha (fecha) {
+		nuevaFecha = moment(fecha).format('DD-MM-YYYY')
+		return nuevaFecha
+	}
+
+	$('.tabs_nav li a').each(function() {
+		var $href = $(this).attr('href');
+		$(this).on('click', function(e) {
+			e.preventDefault()
+			e.stopPropagation()
+			$('.tabs_nav li a').removeClass('activo')
+			$(this).addClass('activo')
+			$('.tabs-content').load($href + $('#hdnId').val())
+		});
+	})
+
+</script>
+{% endblock scripts_body %}

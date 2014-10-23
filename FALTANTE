@@ -1,0 +1,49 @@
+FALTANTE
+
+VALIDAR LOS HORARIOS DE LOS PROFESORES Y LOS ALUMNOS
+VALIDAR QUE NO SE INSCRIBAN ni EDITEN LOS ALUMNOS A UNA MISMA CATEDRA CON DIFERENTES AÑOS O SECCIONES  ?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿
+
+
+
+mostrar el ESTADO de los alumnos en los reportes
+arreglar los FILTORS de busqueda que solo puestren los alumnos activos
+arreglar los ENCABEZADOS de los reportes en pdf
+ordenar alfabeticamente como se muestran las actividades
+
+
+Imprimir Alumno(Si da tiempo (Y) )
+Constancia de estudio
+
+Revisar que esten todas las Bitacoras
+ENCABEZADOS E INFORMACION EN LOS REPORTES
+
+
+REVISAR LAS VALIDADCIONES en los editar
+Revisar las asignaciones
+
+0 = error
+1 = todo bn
+2 = error de duplicidad
+3 = notificacion
+
+if (data.estado == 0) {
+	
+}else if (data.estado == 1){
+	
+}else if (data.estado == 2){
+	
+}else if (data.estado == 3){
+	
+}
+Reestructurar la base de datos con una tabla para orquestas, otra para coros y una de voces, y la de actividades que sea para talleres, seccionales, y otros
+
+COROS
+Baby Los Guaritos
+Pre-Infantil Carmen Elena de Lara
+Infantil Pequeñas Voces del Valle
+Juvenil Adulto Prof. Adelmo Ceballos
+
+ORQUESTA
+Iniciación Hector Guitierres
+Pre-Infantil Maria Luisa Stopello
+Infantil Gral. José Florencio Jiménez

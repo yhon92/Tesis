@@ -1,0 +1,146 @@
+<section>
+	<div>
+		<div>
+			<fieldset>
+				<legend>Datos</legend>
+				<input type="hidden" id="hdnId" value="{{profesor.id}}">
+				<section class="inline-block">
+					<div>
+						<label class="block">Nombres:</label>
+						<input id="nombres" class="txt" type="text" name="txtNombres" placeholder="Ejm: Roberto" required onkeypress="return soloLetras(event);" autocomplete="off" value="{{profesor.nombres}}">
+					</div>
+					<div>
+						<label class="block">Cédula:</label>
+						<input id="cedula" class="txt" type="text" name="txtCedula" placeholder="Ejm: 1234567" required onkeypress="return soloNum(event);" onkeyup="format(this);" autocomplete="off" value="{{profesor.cedula}}">
+					</div>
+				</section>
+				<section class="inline-block align-top padding-left">
+					<div>
+						<label class="block">Apellidos:</label>
+						<input id="apellidos" class="txt" type="text" name="txtApellidos" placeholder="Ejm: Serizo" required onkeypress="return soloLetras(event);" autocomplete="off" value="{{profesor.apellidos}}">
+					</div>
+					<div>
+						<label class="block">Estado:</label>
+						<label for="estado">Activo: <input id="estado" class="middle" type="checkbox" name="checkEstado" title="Estado" {% if profesor.activo == True %} checked {% endif %}></label>
+					</div>
+				</section>
+				<div class="center-text">
+					<button class="boton-on" id="guardarDatos">Guardar</button>
+				</div>
+			</fieldset>
+		</div>
+	</div>
+	<div>
+		<div>
+			<fieldset class="center-text min" id="actividad">
+				<legend>Actividades</legend>
+			{% if actividades_profesor %}
+				<fieldset class="transparente align-left">
+					<legend>Actividad</legend>
+				{% for profesor in actividades_profesor %}
+					<div>
+						<select data="actividad" id="{{profesor.id}}" class="list large" name="lstActividad{{profesor.id}}" required>
+							{% for actividad in actividades %}
+								<option value="{{actividad.id}}" {% if profesor.actividad.id == actividad.id %} selected {% endif %} >{{actividad.tipo.nombre}} {{actividad.nombre}}</option>
+							{% endfor %}
+						</select>
+					</div>
+				{% endfor %}
+				</fieldset>
+				<fieldset class="transparente center-text min">
+					<legend>Cargo</legend>
+				{% for profesor in actividades_profesor %}
+					<div>
+						<select class="list" name="lstCargo{{profesor.id}}" required>
+							{% for cargo in cargos %}
+								<option value="{{cargo.id}}" {% if profesor.cargo.id == cargo.id %} selected {% endif %} >{{cargo.nombre}}</option>
+							{% endfor %}
+						</select>
+					</div>
+				{% endfor %}
+				</fieldset>
+				<div class="center-text">
+					<button class="boton-on" id="guardarActividad">Guardar</button>
+				</div>
+			{% else %}
+				<p>No se ha sido designado a ninguna actividad</p>
+			{% endif %}
+			</fieldset>
+		</div>
+	</div>
+</section>
+<script>
+	$('#guardarDatos').on('click', enviarGuardarDatos)
+	$('#guardarActividad').on('click', enviarGuardarActividad)
+
+	function enviarGuardarDatos(e) {
+		e.preventDefault()
+		var activo = '0',
+				$id = $('#hdnId').val(),
+				$cedula = $('input[name=txtCedula]'),
+				$nombres = $('input[name=txtNombres'), 
+				$apellidos = $('input[name=txtApellidos]')
+
+		if ($('input[name=checkEstado]').prop('checked')) {
+			activo = '1'
+		}
+		if ($cedula.val() != '' && $nombres.val() != '' && $apellidos.val() != '') {
+			if (validarString('Nombres', $nombres.val()) && validarString('Apellidos', $apellidos.val()) && validarCedula($cedula.val())) {
+				var	datos = {
+						id: $id,
+						cedula: $cedula.val(), 
+						nombres: $nombres.val(), 
+						apellidos: $apellidos.val(), 
+						activo: activo
+				}
+				$.post('guardar-datos/', datos , function(data, textStatus, xhr) {
+					if (data.estado == 0) {
+						alertify.error("¡Error al guardar los datos!")
+					}else if (data.estado == 1){
+						alertify.success("¡Profesor Editado!")
+					}else if (data.estado == 3){
+						alertify.log("¡No hubo modificación!")
+					}
+				})
+			}
+		}else {
+			alertify.log("¡Complete todos los campos!")
+		}
+	}
+
+	function enviarGuardarActividad(e) {
+		e.preventDefault()
+		var actividad = new Array()
+		$('#actividad div select[data=actividad]').each(function(i) {
+			var $id = $(this).attr('id')
+			actividad[i] = [{
+				id: $id,
+				profesor: $('#hdnId').val(),
+				actividad: $('select[name=lstActividad'+ $id +']').val(),
+				cargo: $('select[name=lstCargo'+ $id +']').val()
+			}]
+		})
+		var datos = {
+			items: actividad
+		}
+		$.post('guardar-actividad/', JSON.stringify(datos), function(data, textStatus, xhr) {
+			if (data.estado == 0) {
+				alertify.error("¡Error al editar actividad!")
+			}else if (data.estado == 1){
+				alertify.success("¡Actividad Editada!")
+				if (data.ocupado) {
+					$.each(data.ocupado, function(i, valor) {
+						alertify.error("Cargo: "+ valor.cargo +" ocupado en: "+ valor.actividad)
+					})
+				}
+			}else if (data.estado == 3){
+				alertify.log("¡No hubo modificación!")
+				if (data.ocupado) {
+					$.each(data.ocupado, function(i, valor) {
+						alertify.error("El cargo: "+ valor.cargo +" está ocupado en: "+ valor.actividad)
+					})
+				}
+			}
+		})
+	}
+</script>

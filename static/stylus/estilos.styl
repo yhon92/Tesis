@@ -1,0 +1,406 @@
+@import 'nib'
+@import 'normalize.styl'
+@import 'fonts.styl'
+@import 'pikaday.styl'
+@import 'jTPS.styl'
+@import 'alertify.styl'
+
+vendor-prefixes = webkit o ms moz official
+
+/* Paleta de Colores */
+
+azul_claro = #2F90F2
+azul_oscuro = #08298A
+gris_claro = #ECECEC
+gris_oscuro = #292929
+gris_degradado = #DFDFDF
+rojo_oscuro = #BF3030
+naranja = #FA0
+verde_claro = #00FF33
+verde_oscuro = #02BC02
+verde_mas_oscuro = #005E01
+/* Redefiniendo el diseño de los tag HTML */
+
+a
+	color azul_claro
+	cursor pointer
+	font-size 1em
+	font-weight bold
+	text-decoration none
+	transition all 0.3s ease-out
+	&:hover
+		color verde_oscuro
+		transition all 0.3s ease-out
+
+body
+	background #F9F9F9
+	color gris_oscuro
+	font-family "Cabin-bold"
+	font-size 16px	
+
+header
+	background linear-gradient(gris_claro, gris_degradado)
+	box-shadow 0px 2px 2px rgba(50,50,50,.5)
+	text-align center
+	figure
+		// margin 0 40px 0 40px
+		margin 0 3.3px
+		.logo-fundamusical
+			width 300px
+		.logo-quibor
+			margin-right 100px
+			width 153px
+	hgroup
+		h1
+			font-size 1.5em
+
+fieldset
+	border .1em solid verde_oscuro
+	border-radius .5em
+	display inline-block
+	margin 0em .3em .3em .3em
+	padding 0 .5em .5em .5em
+	text-align left
+	.min
+		min-width 30%
+	.transparente
+		margin .1em
+		padding .2em
+		legend
+			color verde_mas_oscuro
+		.padding
+			padding 5.5px 0
+
+nav
+	// background #C6C6C6
+	background #DDE3E6
+	border-radius 0 .8em .8em 0
+	box-shadow 2px 2px 1px rgba(0, 0, 0, 0.5)
+	position fixed
+	top 200px
+	width 10%
+	ul
+		list-style none
+	.menu
+		// font-size 1.2em
+		font-size 1.1em
+		margin 0
+		padding 0
+		li
+			&:first-child > a
+				border-radius 0 .6em 0 0
+			&:last-child > a
+				border-radius 0 0 .6em 0
+			a
+				border 1px solid transparent
+				display block
+				padding .2em .8em
+				transition all 0.5s ease-out
+				&:hover
+					// background #DCF9DD
+					background #CAECCA
+					border 1px solid #00B84E
+					color grey
+					padding-left 25px
+			.sub
+				display none
+				li
+					&:first-child > a, &:last-child > a
+						border-radius 0
+		.activo
+			background white !important
+			// border solid 1px #00B84E
+			border solid 1px rgba(3, 255, 0, .90)
+			box-shadow inset 0 0 12px rgba(3, 255, 0, .90)
+			// color verde_oscuro
+			color #1BDC27 !important
+			padding-left 25px
+
+label
+	cursor pointer
+
+legend
+	color gris_oscuro
+	font-weight bold
+
+/* Declaracion de los OOCSS | Esto significa que son "Clases de CSS Orientado a Objetos" las cuales se van a utilizar de forma repetitiva*/
+.align-left
+	text-align left
+
+.align-top
+	vertical-align top
+
+.boton-on, .boton-off
+	// font-family "Exo",Helvetica, Arial, sans-serif
+	background-color #fff
+	background-image -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fff), to(#bbb))
+	background-image linear-gradient(0% 100% 90deg, #BBBBBB, #FFFFFF)
+	border 1px solid #f1f1f1
+	border-radius 10px
+	box-shadow 0 1px 2px rgba(0, 0, 0, 0.5)
+	color #444
+	font-weight bold
+	line-height .5
+	outline none
+	padding 9px 20px
+	text-shadow 0 1px 1px rgba(255, 255, 255, 0.85)
+
+.boton-on
+	&:hover
+		color verde_oscuro
+		cursor pointer
+	&:active
+		border 1px solid #0D920D
+		box-shadow 0 0 1px 1px #02BC02 inset
+		color #444
+		outline none
+
+.boton-off
+	&:hover
+		color red
+		cursor pointer
+	&:active
+		border 1px solid #9C0505
+		box-shadow 0 0 1px 1px #F00 inset
+		color #444
+		outline none
+.block
+	display block
+
+.caldr
+	border 2px solid #aaa
+	border-radius 5px
+	// box-shadow 0px 0px 3px #ccc, 0 10px 15px #eee inset
+	color black
+	cursor pointer
+	font-family "QuickSand-Italic"
+	font-size .8em
+	outline none
+	padding 5px
+	text-align center
+	transition padding .25s, box-shadow .30s
+	width 110px
+	&:focus
+		border 2px solid #00B7FF
+		box-shadow 0 0 5px #00B7FF
+		font-family "QuickSand-Regular"
+		font-size .8em
+		padding 5px 20px
+	
+.center-block
+	margin auto
+
+.center-text
+	text-align center
+
+.error
+	strong
+		color yellow
+	p
+		background rojo_oscuro
+		border-radius .5em
+		color white
+		padding .5em .2em
+	.login
+		font-family "Cabin-regular"
+		margin 1em auto
+		width 20%
+
+.gris_oscuro
+	color gris_oscuro
+
+.transparente
+	border none !important
+
+.form
+	input[type=text],	input[type=password], input[type=number], select
+		display block
+		// margin .6em auto
+	input[type=radio], input[type=checkbox]
+		margin .5em 0
+	select
+		width 130px
+	select[disabled]
+		background gris_claro
+
+.inline-block
+	display inline-block !important
+
+.label-mostrar
+	color azul_claro
+	padding .2em 0
+	text-align center
+
+.label-mostrar-padding-left
+	padding-left 20px
+
+.large
+	width 200px !important
+
+.list
+	background white
+	border 2px solid #aaa
+	border-radius 5px
+	font-family "QuickSand-Italic"
+	font-size 12px
+	padding 5px
+	outline none
+	transition padding .25s
+	width 120px
+	&:focus
+		border-color #00B7FF
+		box-shadow 0 0 2px #00B7FF
+		font-family "QuickSand-Regular"
+
+.middle
+	vertical-align middle
+
+.nav_modulos
+	margin 1em
+	a
+		// background #DDE3E6
+		background #DDE3E6
+		border-radius 3px
+		padding .5em 2em
+		&:hover
+			background #F0F0F0
+			color verde_oscuro
+			// box-shadow 0 0 5px rgba(47, 144, 242, .75) inset
+			box-shadow 0 0 5px rgba(0, 0, 0, .75) inset
+	.activo
+		background #F0F0F0
+		color naranja
+		box-shadow 0 0 5px rgba(0, 0, 0, .75) inset
+
+.none
+	display none
+
+.none-important
+	display none !important
+
+.num
+	border 2px solid #aaa
+	border-radius 5px
+	outline none
+	padding 5px 8px
+
+.padding-left
+	padding-left 20px
+
+.rbtn
+	width 20px
+
+.relative
+	position relative
+
+.tabs_nav
+	list-style none
+	padding 0
+	margin 0 0 .2em 0
+	li
+		// background #DDE3E6
+		display inline-block
+		a
+			border 1px solid transparent
+			border-radius .3em
+			color verde_oscuro
+			display block
+			padding .4em .2em
+			&:hover
+				border 1px solid azul_claro
+				background #DCFBE4
+				color	azul_claro
+	.activo
+		border 1px solid azul_claro
+		background #DCFBE4
+		color	azul_claro
+
+.talla
+	width 25px !important
+
+.txt
+	border 2px solid #aaa
+	border-radius 5px
+	// box-shadow 0 0 3px #ccc, 0 10px 15px #eee inset
+	color black
+	font-family "QuickSand-Italic"
+	font-size 1em
+	// height 20px
+	height 15px
+	outline none
+	padding 5px 8px
+	text-align center
+	transition box-shadow .30s
+	width 210px
+	&:focus
+		border 2px solid #00B7FF
+		box-shadow 0 0 2px #00B7FF
+		font-family "QuickSand-Regular"
+		font-size 1em
+
+/* Maquetacion del sistema no OOCSS */
+.contenedor-datos
+	max-width 13%
+
+.contenedor-asignaciones
+	width 22.5%
+
+.contenedor-login
+	width 30%
+
+.loginUsuario, .loginPassword
+	background-position 6px 3px
+	background-repeat no-repeat
+	margin .6em auto
+
+.loginUsuario
+	background-image url(../img/icon-username.png)
+	&:before
+		background rgba(0,255,0, 0.5)
+
+.loginPassword
+	background-image url(../img/icon-password.png)
+
+.menor
+	padding-left 2em
+
+.registrar_form
+	fieldset
+		vertical-align top
+
+.resultado
+	// background gris_claro
+	background #F9F9F9
+	// border-bottom 1px solid #dedede
+	border-bottom 1px solid verde_oscuro
+	// border-left 1px solid #dedede
+	border-left 1px solid verde_oscuro
+	border-radius 0 0 .5em .5em
+	// border-right 1px solid #dedede
+	border-right 1px solid verde_oscuro
+	left -1px
+	max-height 150px
+	overflow-x hidden
+	overflow-y auto
+	position absolute
+	width 246px
+	.item
+		border-top solid 1px #dedede
+		color #186520
+		font-size .8em
+		max-height 35px
+		padding 6px 10px
+		&:hover
+			background gris_claro
+			border 
+			color verde_oscuro
+		&:first-child
+			border-top none
+
+.salir
+	color #F43030
+	&:hover
+		color #1BDC27 !important
+
+.short
+	width 100px !important

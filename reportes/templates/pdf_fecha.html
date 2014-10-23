@@ -1,0 +1,37 @@
+{% extends "base_pdf_horizontal.html" %}
+{% block header %}
+		<h1>Alumnos por fecha de </h1>
+		{% if fecha == 'fecha_nacimiento' %}
+			<h1>nacimiento</h1>
+		{% elif fecha == 'fecha_ingreso' %}
+			<h1>ingreso</h1>
+		{% else %}
+			<h1>actualización</h1>
+		{% endif %}
+		{# <h2>Todos los Nivel</h2> #}
+		<p>del: <strong>{{desde|date:'d M Y'}}</strong> hasta: <strong>{{hasta|date:'d M Y'}}</strong></p>
+{% endblock header %}
+{% block header_table %}
+	<th width="50px">Nº</th>
+	<th width="380px">Nombres y Apellidos</th>
+	<th width="100px">Cédula</th>
+	<th width="100px">Fecha N.</th>
+	<th width="60px">Edad</th>
+	<th width="60px">Sexo</th>
+	<th width="90px">Estado</th>
+{% endblock header_table %}
+{% block content %}
+	{% if alumnos %}
+		{% for alumno in alumnos %}
+			<tr>
+				<td width="50px">{{alumno.num}}</td>
+				<td width="380px">{{alumno.nombre}}</td>
+				<td width="100px">{{alumno.cedula}}</td>
+				<td width="100px">{{alumno.fecha|date:'d-m-Y'}}</td>
+				<td width="60px">{{alumno.edad}}</td>
+				<td width="60px">{{alumno.sexo}}</td>
+				<td width="90px">{{alumno.estado}}</td>
+			</tr>
+		{% endfor %}
+	{% endif %}
+{% endblock content %}

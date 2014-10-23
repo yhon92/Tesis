@@ -1,0 +1,126 @@
+{% block contenido %}
+<section class="contenedor-registar">
+	<form class="registrar_form form" name="form_Registrar" action="" method="post">
+		<h3>Registar Alumno</h3>
+		<fieldset>
+			<legend>Datos Personales</legend>
+			<div>
+				<label for="nombres">Nombres:</label>
+				<input id="nombres" class="txt" type="text" name="txtNombres" placeholder="Ejm: Ricardo" required onkeypress="return soloLetras(event);" autocomplete="off">
+			</div>
+			<div>
+				<label for="apellidos">Apellidos:</label>
+				<input id="apellidos" class="txt" type="text" name="txtApellidos" placeholder="Ejm: Durán" required onkeypress="return soloLetras(event);" autocomplete="off">
+			</div>
+			<div>
+				<label for="menor" class="block"><input id="menor" type="checkbox" name="menor" checked>Menor</label>
+			</div>
+			<div id="divMenor" style="display: none;">
+				<label for="cedula">Cédula:</label><label class="inline-block menor" for="menor"></label>
+				<input id="cedula" class="txt middle" type="text" name="txtCedula" value="Menor" placeholder="Ejm:1234567" required onkeypress="return soloNum(event);" onkeyup="format(this);" autocomplete="off">
+			</div>
+			<div>
+				<label class="block" for="sexo">Sexo:</label>
+				<select class="list" name="lstSexo" id="sexo">
+					<option value="">Seleccione</option>
+					<option value="F">Femenino</option>
+					<option value="M">Masculino</option>
+				</select>
+			</div>
+			<div>
+				<label for="fecha_naci">Fecha de Nacimiento:</label>
+				<input class="caldr" id="fecha_naci" type="text" name="txtFecha_naci" required onkeydown="return ningunaTecla(event);" autocomplete="off" placeholder="Haga Click" >
+			</div>
+			<!-- <div>
+				<label for="fecha_ingr">Fecha&nbsp;Ingreso:</label>
+				<input class="caldr" id="fecha_ingr"type="text" name="txtFecha_ingr" required autocomplete="off" placeholder="Haga Click">
+			</div>  -->
+		</fieldset>
+		<div>
+			<button class="boton-on" id="registrarAlumno">Registrar</button>
+		</div>
+	</form>
+</section>
+{% endblock contenido %}
+{% block scripts_body %}
+<script>
+	$('input[name=menor]').on('change', activarMenor)
+	$('#registrarAlumno').on('click', enviarRegistrarAlumno)
+
+	function activarMenor(e) {
+		e.preventDefault()
+		$('#divMenor').slideToggle(function() {
+			if ($('#divMenor').attr('style') === 'display: none;') {
+				$('input[name=txtCedula]').val('Menor')
+			} else{
+				$('input[name=txtCedula]').val('')
+			}
+		})
+	}
+
+	function enviarRegistrarAlumno(e) {
+		e.preventDefault()
+		var menor = '0',
+				$cedula = $('input[name=txtCedula]'),
+				$nombres = $('input[name=txtNombres'), 
+				$apellidos = $('input[name=txtApellidos]'),
+				$fecha_naci = $('input[name=txtFecha_naci]'),
+				$sexo = $('select[name=lstSexo]')
+				// $fecha_ingr = $('#fecha_ingr')
+		if ($cedula.val() === 'Menor'){
+			menor = '1'
+		}
+		if ($cedula.val() != '' && $nombres.val() != '' && $apellidos.val() != '' && $fecha_naci.val() != '' && $sexo.val() != '') {
+			if (validarString('Nombres', $nombres.val()) && validarString('Apellidos', $apellidos.val()) && validarCedula($cedula.val()) && validarAnioDeNacimiento($fecha_naci.val())) {
+				var	datos = {
+						menor: menor,
+						cedula: $cedula.val(), 
+						nombres: $nombres.val(), 
+						apellidos: $apellidos.val(), 
+						fecha_nacimiento: reconvertirFecha($fecha_naci.val()),
+						sexo: $sexo.val()
+			// fecha_ingreso: $fecha_ingr.val()
+				}
+				$.post('registrar-alumno/', datos , function(data, textStatus, xhr) {
+					if (data.estado == 0) {
+						alertify.error("¡Error al registrar!")
+					}else if (data.estado == 1){
+						alertify.success("¡Registro Exitoso!")
+							$('input[name=menor]').prop('checked', 'true')
+							$('#divMenor').slideUp()
+							$cedula.val('Menor')
+							$nombres.val('')
+							$apellidos.val('')
+							$fecha_naci.val('')
+							$sexo.val('')
+					}else if (data.estado == 2){
+						alertify.error("¡Alumno ya registrado!")
+							$('input[name=menor]').prop('checked', 'true')
+							$('#divMenor').slideUp()
+							$cedula.val('Menor')
+							$nombres.val('')
+							$apellidos.val('')
+							$fecha_naci.val('')
+							$sexo.val('')
+					}
+				})
+			}
+		}else {
+			alertify.log("¡Complete todos los campos!")
+		}
+	}
+
+	function reconvertirFecha(fecha) {
+		return moment(fecha, 'DD-MM-YYYY').format('YYYY-MM-DD')
+	}
+
+	var picker = new Pikaday({
+		field: document.getElementById('fecha_naci'),
+		firstDay: 7,
+		format: 'DD-MM-YYYY',
+		maxDate: new Date('2020-12-31'),
+		minDate: new Date('1950-01-01'),
+		yearRange: [1950,(moment().format('YYYY'))-3] // Hasta este año menos 3
+	});
+</script>
+{% endblock scripts_body %}

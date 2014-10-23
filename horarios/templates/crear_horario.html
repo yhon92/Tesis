@@ -1,0 +1,80 @@
+<form class="registrar_form form" name="form_Crear_Horario" action="" method="post">
+	<h3>Crear Horario Clase</h3>
+	<fieldset>
+		<legend>Características de la clase</legend>
+		<div>
+			<label for="clase">Clase:</label>
+			<select id="clase" class="list large" name="lstClase" required>
+				<option value="">Seleccionar</option>
+			{% for clase in clases %}
+				<option value="{{clase.id}}">{{clase.catedra}} {{clase.nivel.nombre}} {{clase.seccion.nombre}}</option>
+			{% endfor %}
+			</select>
+		</div>
+		<div>
+			<label for="dia">Dia:</label>
+			<select id="dia" class="list large" name="lstDia" required>
+				<option value="">Seleccionar</option>
+			{% for dia in dias %}
+				<option value="{{dia.id}}">{{dia.nombre}}</option>				
+			{% endfor %}
+			</select>
+		</div>
+		<div>
+			<label for="desde">Hora Desde:</label>
+			<div class="input-append bootstrap-timepicker">
+				<input type="text" class="txt short inline-block" name="txtHoraDesde" autocomplete="off" onkeydown="return ningunaTecla(event);">
+				<span class="add-on"><i class="icon-time"></i></span>
+			</div>
+		</div>
+		<div>
+			<label for="hasta">Hora Hasta:</label>
+			<div class="input-append bootstrap-timepicker">
+				<input type="text" class="txt short inline-block" name="txtHoraHasta" autocomplete="off" onkeydown="return ningunaTecla(event);">
+				<span class="add-on"><i class="icon-time"></i></span>
+			</div>
+		</div>
+	</fieldset>
+	<div>
+		<button class="boton-on" id="crearHorarioClase">Crear</button>
+	</div>
+</form>
+{% block scripts_body %}
+	<script>
+		$('input[name=txtHoraDesde').timepicker()
+		$('input[name=txtHoraHasta').timepicker()
+		
+		$('#crearHorarioClase').on('click', enviarCrearHorarioClase)
+		// $('select[name=lstClase]').on('change', buscarHorario)
+
+		function enviarCrearHorarioClase(e) {
+			e.preventDefault();
+			var $clase = $('select[name=lstClase]'), 
+					$dia = $('select[name=lstDia]'),
+					$desde = $('input[name=txtHoraDesde'),
+					$hasta = $('input[name=txtHoraHasta')
+
+			if ($clase.val() != '' && $dia.val() != '' && $desde.val() != '' && $hasta.val() != '') {
+				if (validarHoras($desde.val(), $hasta.val())) {
+					var	datos = {
+						clase: $clase.val(), 
+						dia: $dia.val(), 
+						desde: $desde.val(), 
+						hasta: $hasta.val()
+					}
+					$.post('crear-horario/', datos , function(data, textStatus, xhr) {
+						if (data.estado == 0) {
+							alertify.error("¡Error al establecer horario!")
+						}else if (data.estado == 1){
+							alertify.success("¡Horario Establecido!")
+						}else if (data.estado == 2){
+							alertify.error("¡Horario ya establecido!")
+						}
+					})	
+				}
+			}else {
+				alertify.log("¡Seleccione y complete todos los campos!")
+			}
+		}
+	</script>
+{% endblock scripts_body %}

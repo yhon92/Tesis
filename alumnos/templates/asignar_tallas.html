@@ -1,0 +1,72 @@
+<div id="tallas">
+	<fieldset id="tallas">
+{% if prendas %}
+		<div>
+			<fieldset class="transparente center-text">
+				<legend>Prenda</legend>
+				{% for prenda in prendas %}
+					<div class="padding">
+						<label for="{{prenda.nombre}}">{{prenda.nombre}}:</label>
+					</div>
+				{% endfor %}
+			</fieldset>
+			<fieldset class="transparente center-text">
+				<legend>Talla</legend>
+				{% for prenda in prendas %}
+					<div>
+						<input id="{{prenda.nombre}}" data-id="{{prenda.id}}" class="txt talla" type="text" name="txt{{prenda.nombre}}" required>
+					</div>
+				{% endfor %}
+			</fieldset>
+				<fieldset class="transparente center-text">
+					<legend>Otorgado</legend>
+				{% for prenda in prendas %}
+					<div class="padding">
+						<input class="middle" type="checkbox" name="otorgado{{prenda.nombre}}" title="Otorgado">
+					</div>
+				{% endfor %}
+			</fieldset>
+		</div>
+	</fieldset>
+	<div>
+		<button class="boton-on" id="asignarTalla">Asignar</button>
+	</div>
+{% else %}
+	<p>No hay prenda para asignar</p>	
+	</fieldset>
+{% endif %}
+</div>
+<script>
+	$('#asignarTalla').on('click', function(e) {
+		e.preventDefault()
+		var si_hay = false
+		$('#tallas div input[type=text]').each(function() {
+			if ($(this).val() != "") {
+				si_hay = true
+				if ($('input[name=otorgado' + $(this).attr('id') + ']').prop('checked')) {
+					$otorgado = '1'
+				}else{
+					$otorgado = '0'
+				}
+				var datos = {
+					alumno: $('#hdnId').val(),
+					prenda: $(this).attr('data-id'),
+					talla: $(this).val(),
+					otorgado: $otorgado
+				}
+				$.post('asignar-talla/', datos, function(data, textStatus, xhr) {
+					if (data.estado == 0) {
+						alertify.error("¡Error al asignar prenda!")
+					}else if (data.estado == 1){
+						alertify.success("¡"+ data.prenda +" Asignado!")
+					}else if (data.estado == 2){
+						alertify.error("¡"+ data.prenda +" ya asignado!")
+					}
+				})
+			}
+		})
+		if (si_hay == false) {
+			alertify.log("¡Complete al menos una talla!")
+		}
+	})
+</script>

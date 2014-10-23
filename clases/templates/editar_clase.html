@@ -1,0 +1,141 @@
+<div>
+	<form class="buscar_form form" name="form_Buscar" action="" method="post">
+		<h3>Editar Clase</h3>
+		<fieldset>
+			<legend>Selecione una Clase</legend>
+			<select id="catedra" class="list large" name="lstClase" required>
+				<option value="">Seleccionar</option>
+			{% if clases %}
+				{% for clase in clases %}
+					<option value="{{clase.id}}">{{clase.catedra.nombre}} {{clase.nivel.nombre}} {{clase.seccion.nombre}}</option>
+				{% endfor %}
+			{% endif %}
+			</select>
+		</fieldset>
+	</form>
+</div>
+<div id="mostrar" class="none">
+	<form id="mostrar_form" class="registrar_form form" name="form_Modificar_Catedra" action="" method="post">
+		<fieldset>
+			<legend>Características de la clase</legend>
+		<div>
+			<label for="catedra">Catedra:</label>
+			<select id="catedra" class="list large" name="lstCatedra" disabled required>
+			{% for catedra in catedras %}
+				<option value="{{catedra.id}}">{{catedra.nombre}}</option>
+			{% endfor %}
+			</select>
+		</div>
+		<div>
+			<label for="profesor">Profesor:</label>
+			<select id="profesor" class="list large" name="lstProfesor" required>
+			{% for profesor in profesores %}
+				<option value="{{profesor.id}}">{{profesor.nombres}} {{profesor.apellidos}}</option>				
+			{% endfor %}
+			</select>
+		</div>
+		<div>
+			<label for="nivel">Nivel:</label>
+			<select id="nivel" class="list" name="lstNivel" required>
+			{% for nivel in niveles %}
+				<option value="{{nivel.id}}">{{nivel.nombre}}</option>
+			{% endfor %}
+			</select>
+		</div>
+		<div>
+			<label for="seccion">Sección:</label>
+			<select id="seccion" class="list" name="lstSeccion" required>
+			{% for seccion in secciones %}
+				<option value="{{seccion.id}}">{{seccion.nombre}}</option>
+			{% endfor %}
+			</select>
+		</div>
+			<!-- <div>
+				<label for="dia">Día:</label>
+				<select id="dia" class="list" name="lstDia" required>
+					<option value="">Seleccionar</option>
+				</select>
+			</div>
+			<div>
+				<label for="de">Horario: </label>
+				<label for="de">de</label>
+				<select id="de" class="list" name="lstHoraDe" required>
+					<option value=""></option>
+				</select>
+				<label for="a">a</label>
+				<select id="a" class="list" name="lstHoraA" required>
+					<option value=""></option>
+				</select>
+			</div> -->
+			<div>
+				<label for="cupo">Cupo:</label>
+				<input id="cupo" class="num" type="number" name="txtCupo" min="0" max="40" step="1" value="0" required>
+			</div>
+		</fieldset>
+		<div>
+			<button class="boton-on" id="guardarClase">Guardar</button>
+		</div>
+	</form>
+</div>
+{% block scripts_body %}
+<script>
+	var $clase = $('select[name=lstClase]'),
+			$catedra = $('select[name=lstCatedra]'),
+			$profesor = $('select[name=lstProfesor]'),
+			$nivel = $('select[name=lstNivel]'),
+			$seccion = $('select[name=lstSeccion]'),
+			$cupos = $('input[name=txtCupo]')
+
+	$($clase).on('change', buscarClase)
+	$('#guardarClase').on('click', guardarClase);
+
+	function buscarClase() {
+		var $id = $(this).val()
+		if (!$id) {
+			$('#mostrar').addClass('none')
+		}else{
+			$.get('buscar-clase/' + $id, mostrarDatos)
+		}
+	}
+
+	function mostrarDatos(datos) {
+		$catedra.val(datos.catedra)
+		$profesor.val(datos.profesor)
+		$nivel.val(datos.nivel)
+		$seccion.val(datos.seccion)
+		$cupos.val(datos.cupo)
+		$('#mostrar').removeClass('none')
+	}
+
+	function guardarClase(e) {
+		e.preventDefault()
+		if ($profesor.val() != '' && $nivel.val() != '' && $seccion.val() != '' && $cupos.val() != '') {
+			if (parseInt($cupos.val()) >= 10) {
+				var datos = {
+						id: $clase.val(),
+						catedra: $catedra.val(),
+						profesor: $profesor.val(),
+						nivel: $nivel.val(),
+						seccion: $seccion.val(),
+						cupo: $cupos.val()
+				}
+				$.post('guardar-clase/', datos, function(data, textStatus, xhr){
+					if (data.estado == 0) {
+						alertify.error("¡Error al guardar los datos!")
+					}else if (data.estado == 1){
+						alertify.success("¡Clase Editada!")
+					}else if (data.estado == 2){
+						alertify.error("¡Ya existe esta clase!")
+					}else if (data.estado == 3){
+						alertify.log("¡No hubo modificación!")
+					}
+				})
+			}else {
+				alertify.log("¡Cupo de ser minimo de 10!")
+			}
+		}else {
+			alertify.log("¡Seleccione y complete todos los campos!")
+		}
+	}
+</script>
+{% endblock scripts_body %}

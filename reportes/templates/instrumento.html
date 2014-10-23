@@ -1,0 +1,75 @@
+<fieldset id="instrumento">
+	<legend>Criterios</legend>
+	<div class="block">
+		<div class="inline-block">
+			<label class="block" for="instrumento">Instrumento:</label>
+			<select class="list" name="lstInstrumento">
+				<option value="todos">Todos</option>
+			{% for instrumento in instrumentos %}
+				<option value="{{instrumento.id}}">{{instrumento.nombre}}</option>
+			{% endfor %}
+			</select>
+		</div>
+		<div class="inline-block">
+			<label class="block" for="nivel">Nivel:</label>
+			<select id="nivel" class="list" name="lstNivel">
+				<option value="todos">Todos</option>
+				{% for nivel_i in niveles_i %}
+				<option value="{{nivel_i.id}}">{{nivel_i.nombre}}</option>
+				{% endfor %}
+			</select>
+		</div>
+	</div>
+	<div class="block center-text">
+		<div class="inline-block">
+			<label class="block" for="cedula">Cédula:</label>
+			<select class="list" name="lstCedula" id="cedula">
+				<option value="todos">Todos</option>
+				<option value="0">Con cédula</option>
+				<option value="1">Sin cédula</option>
+			</select>
+		</div>
+		<div class="inline-block">
+			<label class="block" for="estado">Estado:</label>
+			<select class="list" name="lstEstado" id="estado">
+				<option value="todos">Todos</option>
+				<option value="1">Activo</option>
+				<option value="0">Inactivo</option>
+			</select>
+		</div>
+	</div>
+	<div class="block center-text">
+		<div class="inline-block">
+			<label class="block" for="sexo">Sexo:</label>
+			<select class="list" name="lstSexo" id="sexo">
+				<option value="todos">Todos</option>
+				<option value="F">Femenino</option>
+				<option value="M">Masculino</option>
+			</select>
+		</div>
+	</div>
+	<div>
+	<div class="center-text">
+		<button class="boton-on" id="mostrarReporteInstrumento">Mostrar</button>
+	</div>
+</fieldset>
+<script>
+	$('#mostrarReporteInstrumento').on('click',	function (e) {
+			e.preventDefault()
+			var $instrumento = $('select[name=lstInstrumento]'),
+					$nivel = $('select[name=lstNivel]'),
+					$cedula = $('select[name=lstCedula]'),
+					$estado = $('select[name=lstEstado]'),
+					$sexo = $('select[name=lstSexo]')
+			if ($instrumento.val() != "" && $nivel.val() != "" && $cedula.val() != "" && $estado.val() != "" && $sexo.val() != "") {
+				var	datos = {
+					instrumento: $instrumento.val(), 
+					nivel: $nivel.val(),
+					cedula: $cedula.val(),
+					estado: $estado.val(),
+					sexo: $sexo.val()
+				}
+				nuevaPestana('mostrar-instrumento/', datos)
+			}
+		})
+</script>

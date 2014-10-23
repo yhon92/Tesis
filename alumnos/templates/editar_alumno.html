@@ -1,0 +1,438 @@
+<section>
+	<div class="inline-block align-top align-lef">
+		<div class="align-top">
+			<fieldset class="block">
+				<legend>Datos</legend>
+				<input type="hidden" id="hdnId" value="{{alumno.id}}">
+				<section class="inline-block">
+					<div>
+						<label class="block">Nombres:</label>
+						<input id="nombres" class="txt" type="text" name="txtNombres" placeholder="Ejm: Ricardo" required onkeypress="return soloLetras(event);" autocomplete="off" value="{{alumno.nombres}}">
+					</div>
+					<div>
+						<label class="block">Cédula:</label>
+						<input id="cedula" class="txt middle" type="text" name="txtCedula" placeholder="Ejm:1234567" required onkeypress="return soloNum(event);" onkeyup="format(this);" autocomplete="off" value="{{alumno.cedula}}">
+					</div>
+					<div>
+						<label class="block">Fecha de Nacimiento:</label>
+						<input class="caldr" id="fecha_naci" type="text" name="txtFecha_naci" required onkeydown="return ningunaTecla(event);" autocomplete="off" placeholder="Haga Click" value="{{alumno.fecha_nacimiento|date:'d-m-Y'}}">
+					</div>
+				</section>
+				<section class="inline-block align-top padding-left">
+					<div>
+						<label class="block">Apellidos:</label>
+						<input id="apellidos" class="txt" type="text" name="txtApellidos" placeholder="Ejm: Durán" required onkeypress="return soloLetras(event);" autocomplete="off" value="{{alumno.apellidos}}">
+					</div>
+					<div>
+						<label class="block">Sexo:</label>
+						<select class="list" name="lstSexo" id="sexo">
+							<option value="F" {% if alumno.sexo == "F" %}selected {% endif %}>Femenino</option>
+							<option value="M" {% if alumno.sexo == "M" %}selected {% endif %}>Masculino</option>
+						</select>
+					</div>
+					<div>
+						<label class="block">Estado:</label>
+						<label for="estado">Activo: <input id="estado" class="middle" type="checkbox" name="checkEstado" title="Estado" {% if alumno.activo == True %} checked {% endif %}></label>
+					</div>
+				</section>
+				<div class="center-text">
+					<button class="boton-on" id="guardarDatos">Guardar</button>
+				</div>
+			</fieldset>
+		</div>
+		<div class="align-top">
+			<fieldset class="block center-text" id="instrumento">
+				<legend>Individuales</legend>
+			{% if individuales %}
+				<fieldset class="transparente center-text">
+					<legend>Instrumento</legend>
+					{% for alumno in individuales %}
+						<div>
+							<select data="instrumento" id="{{alumno.id}}"class="list" name="lstInstrumento{{alumno.id}}" required>
+								{% for instrumento in instrumentos %}
+									<option value="{{instrumento.id}}" {% if alumno.instrumento.id == instrumento.id %} selected {% endif%} >{{instrumento.nombre}}</option>
+								{% endfor %}
+							</select>
+						</div>
+					{% endfor %}
+				</fieldset>
+				<fieldset class="transparente center-text">
+					<legend>Nivel</legend>
+				{% for alumno in individuales %}
+					<div>
+						<select id="nivel" class="list" name="lstNivel{{alumno.id}}" required>
+							{% for nivel in niveles %}
+								<option value="{{nivel.id}}" {% if alumno.nivel.id == nivel.id %} selected {% endif%} >{{nivel}}</option>
+							{% endfor %}
+						</select>
+					</div>
+				{% endfor %}
+				</fieldset>
+				<fieldset class="transparente center-text">
+					<legend>Profesor</legend>
+				{% for alumno in individuales %}
+					<div>
+						<select id="profesor" class="list large" name="lstProfesor{{alumno.id}}" required>
+							{% for profesor in profesores %}
+								<option value="{{profesor.id}}" {% if alumno.profesor.id == profesor.id %} selected {% endif%} >{{profesor.nombres}} {{profesor.apellidos}}</option>
+							{% endfor %}
+						</select>
+					</div>
+				{% endfor %}
+				</fieldset>
+				<div class="center-text">
+					<button class="boton-on" id="guardarInstrumento">Guardar</button>
+				</div>
+			{% else %}
+				<p>No se ha sido asignado a ningun instrumento</p>
+			{% endif %}
+			</fieldset>
+		</div>
+	</div>
+	<div class="inline-block align-left">
+		<div class="align-top">
+			<fieldset class="block center-text" id="actividad">
+				<legend>Actividades</legend>
+			{% if actividades_alumno %}
+				<fieldset class="transparente align-left">
+					<legend>Actividad</legend>
+				{% for alumno in actividades_alumno %}
+					<div>
+						<select data="actividad" id="{{alumno.id}}" class="list large" name="lstActividad{{alumno.id}}">
+							{% for actividad in actividades %}
+								<option value="{{actividad.id}}" {% if alumno.actividad.id == actividad.id %} selected {% endif%} >{{actividad.tipo.nombre}} {{actividad.nombre}}</option>
+							{% endfor %}
+						</select>
+					</div>
+				{% endfor %}
+				</fieldset>
+				<fieldset class="transparente center-text">
+					<legend>Instrumento</legend>
+					{% for alumno in actividades_alumno %}
+						<div>
+							<select class="list" name="lstInstrumentoActividad{{alumno.id}}">
+							{% if individuales %}
+								<optgroup label="Clásicos">
+								{% for individual in individuales %}
+									<option value="{{individual.instrumento.id}}" {% if alumno.instrumento.id == individual.instrumento.id %} selected {% endif%} >{{individual.instrumento}}</option>
+								{% endfor %}
+								</optgroup>
+							{% else %}
+								<optgroup class="Clásicos">
+									<option value="">No tiene</option>
+								</optgroup>
+							{% endif %}
+								<optgroup label="Voz">
+								{% for instrumento in instrumentos_actividad %}
+									<option value="{{instrumento.id}}" {% if alumno.instrumento.id == instrumento.id %} selected {% endif%}>{{instrumento}}</option>
+								{% endfor %}
+								</optgroup>
+							</select>
+						</div>
+					{% endfor %}
+				</fieldset>
+				<fieldset class="transparente center-text">
+					<legend>Clasificación</legend>
+					{% for alumno in actividades_alumno %}
+						<div>
+							<select class="list" name="lstClasificacion{{alumno.id}}">
+								<option value="" {% if alumno.clasificacion == "" %} selected {% endif%} >No Aplica</option>
+								<option value="I" {% if alumno.clasificacion == "I" %} selected {% endif%} >I</option>
+								<option value="II" {% if alumno.clasificacion == "II" %} selected {% endif%} >II</option>
+								<option value="III" {% if alumno.clasificacion == "III" %} selected {% endif%} >III</option>
+								<option value="IV" {% if alumno.clasificacion == "IV" %} selected {% endif%} >IV</option>
+							</select>
+						</div>
+					{% endfor %}
+				</fieldset>
+				<div class="center-text">
+					<button class="boton-on" id="guardarActividad">Guardar</button>
+				</div>
+			{% else %}
+				<p>No se ha sido asignado a ninguna actividad</p>
+			{% endif %}
+			</fieldset>
+		</div>
+		<div class="align-top">
+			<fieldset class="block" id="clase">
+				<legend>Clases</legend>
+			{% if clases_alumno %}
+				<fieldset class="transparente center-text">
+					<legend>Clase</legend>
+				{% for alumno in clases_alumno %}
+					<div>
+						<select id="{{alumno.id}}" class="list large" name="lstCatedra" data-id="{{alumno.horario.id}}" required>
+						{% for horario in horarios %}
+							<option value="{{horario.id}}" {% if alumno.horario.id == horario.id %} selected {% endif%} >{{horario.clase.catedra.nombre}} {{horario.clase.nivel.nombre}} {{horario.clase.seccion.nombre}}</option>
+						{% endfor %}
+						</select>
+					</div>
+				{% endfor %}
+				</fieldset>
+				<fieldset class="transparente center-text">
+					<legend>Horiario</legend>
+				{% for alumno in clases_alumno %}
+					<div class="padding">
+						<label data="horario" clase-id="{{alumno.horario.clase.id}}" data-id="{{alumno.horario.id}}" class="label-mostrar" id="{{alumno.id}}">{{alumno.horario.dia}} <span class="gris_oscuro">de</span> {{alumno.horario.hora_desde}} <span class="gris_oscuro">a</span> {{alumno.horario.hora_hasta}}</label>
+					</div>
+				{% endfor %}
+				</fieldset>
+				<div class="center-text">
+					<button class="boton-on" id="guardarClase">Guardar</button>
+				</div>
+			{% else %}
+				<p>No se ha sido asignado a ninguna clase</p>
+			{% endif %}
+			</fieldset>
+		</div>
+		<div class="align-top center-text">
+			<fieldset class="align-top" id="prenda">
+				<legend>Prendas</legend>
+			{% if prendas %}
+				<fieldset class="transparente center-text">
+					<legend>Prenda</legend>
+				{% for alumno in prendas %}
+					<div class="padding">
+						<label for="{{alumno.prenda.nombre}}">{{alumno.prenda.nombre}}</label>
+					</div>
+				{% endfor %}
+				</fieldset>
+				<fieldset class="transparente center-text">
+					<legend>Talla</legend>
+				{% for alumno in prendas %}
+					<div>
+						<input id="{{alumno.prenda.nombre}}" data-id="{{alumno.prenda.id}}" class="txt talla" type="text" name="txt{{prenda.nombre}}" required value="{{alumno.talla}}">
+					</div>
+				{% endfor %}
+				</fieldset>
+				<fieldset class="transparente center-text">
+					<legend>Otorgado</legend>
+				{% for alumno in prendas %}
+					<div class="padding">
+						<input id="{{alumno.id}}" class="middle" type="checkbox" name="otorgado{{alumno.prenda.nombre}}" title="Otorgado" {% if alumno.otorgado = True %} checked {% endif %}>
+					</div>
+				{% endfor %}
+				</fieldset>
+				<div class="center-text">
+					<button class="boton-on" id="guardarPrenda">Guardar</button>
+				</div>
+			{% else %}
+				<p>No se ha sido asignado a ninguna clase</p>
+			{% endif %}
+			</fieldset>
+		</div>
+	</div>
+</section>
+<script>
+	$('#guardarDatos').on('click', enviarGuardarDatos)
+	$('#guardarInstrumento').on('click', enviarGuardarInstrumento)
+	$('#guardarActividad').on('click', enviarGuardarActividad)
+	$('#guardarClase').on('click', enviarGuardarClase)
+	$('#guardarPrenda').on('click', enviarGuardarPrenda)
+
+	$('#clase fieldset select').each(function() {
+		$(this).on('change',function(event) {
+			var $id = $(this).attr('id')
+			$.get('buscar-horario/' + $(this).val(), function(data) {
+				labelHorario($id, data)
+			})
+		})
+	})
+
+	function labelHorario(id, data) {
+		$('#clase fieldset div label').each(function() {
+			if ($(this).attr('id') == id) {
+				$(this).html(data.dia +' <span class="gris_oscuro">de</span> '+ data.desde +' <span class="gris_oscuro">a</span> '+ data.hasta)
+				$(this).attr('data-id', data.id)
+				$(this).attr('clase-id', data.clase)
+
+			}
+		})
+	}
+
+	function enviarGuardarDatos(e) {
+		e.preventDefault()
+		var menor = '0',
+				activo = '0',
+				$id = $('#hdnId').val(),
+				$cedula = $('input[name=txtCedula]'),
+				$nombres = $('input[name=txtNombres'), 
+				$apellidos = $('input[name=txtApellidos]'),
+				$fecha_naci = $('input[name=txtFecha_naci]'),
+				$sexo = $('select[name=lstSexo]')
+				
+		if ($cedula.val() === 'Menor'){
+			menor = '1'
+		}
+		if ($('input[name=checkEstado]').prop('checked')) {
+			activo = '1'
+		}
+		if ($cedula.val() != '' && $nombres.val() != '' && $apellidos.val() != '' && $fecha_naci.val() != '' && $sexo.val() != '') {
+			if (validarString('Nombres', $nombres.val()) && validarString('Apellidos', $apellidos.val()) && validarCedula($cedula.val()) && validarAnioDeNacimiento($fecha_naci.val())) {
+				var	datos = {
+						id: $id,
+						menor: menor,
+						cedula: $cedula.val(), 
+						nombres: $nombres.val(), 
+						apellidos: $apellidos.val(), 
+						sexo: $sexo.val(),
+						fecha_nacimiento: reconvertirFecha($fecha_naci.val()),
+						activo: activo
+				}
+				$.post('guardar-datos/', datos , function(data, textStatus, xhr) {
+					if (data.estado == 0) {
+						alertify.error("¡Error al guardar los datos!")
+					}else if (data.estado == 1){
+						alertify.success("¡Alumno Editado!")
+					}else if (data.estado == 3){
+						alertify.log("¡No hubo modificación!")
+					}
+				})
+			}
+		}else {
+			alertify.log("¡Complete todos los campos!")
+		}
+	}
+
+	function enviarGuardarInstrumento(e) {
+		e.preventDefault()
+		var individual = new Array()
+		$('#instrumento div select[data=instrumento]').each(function(i) {
+			var $id = $(this).attr('id')
+			individual[i] = [{
+				id: $id,
+				alumno: $('#hdnId').val(),
+				instrumento: $('select[name=lstInstrumento'+ $id +']').val(),
+				profesor: $('select[name=lstProfesor'+ $id +']').val(),
+				nivel: $('select[name=lstNivel'+ $id +']').val()
+			}]
+		})
+		var datos = {
+			items: individual
+		}
+		$.post('guardar-individual/', JSON.stringify(datos), function(data, textStatus, xhr) {
+			if (data.estado == 0) {
+				alertify.error("¡Error al editar instrumento!")
+			}else if (data.estado == 1){
+				alertify.success("¡Instrumento Editado!")
+			}else if (data.estado == 3){
+				alertify.log("¡No hubo modificación!")
+			}
+		})
+	}
+
+	function enviarGuardarActividad(e) {
+		e.preventDefault()
+		var actividad = new Array()
+		$('#actividad div select[data=actividad]').each(function(i) {
+			var $id = $(this).attr('id')
+			actividad[i] = [{
+				id: $id,
+				alumno: $('#hdnId').val(),
+				actividad: $('select[name=lstActividad'+ $id +']').val(),
+				instrumento: $('select[name=lstInstrumentoActividad'+ $id +']').val(),
+				clasificacion: $('select[name=lstClasificacion'+ $id +']').val()
+			}]
+		})
+		var datos = {
+			items: actividad
+		}
+		$.post('guardar-actividad/', JSON.stringify(datos), function(data, textStatus, xhr) {
+			if (data.estado == 0) {
+				alertify.error("¡Error al editar actividad!")
+			}else if (data.estado == 1){
+				alertify.success("¡Actividad Editada!")
+			}else if (data.estado == 3){
+				alertify.log("¡No hubo modificación!")
+			}
+		})
+	}
+
+	function enviarGuardarClase(e) {
+		e.preventDefault()
+		var clase = new Array()
+		$('#clase label[data=horario]').each(function(i) {
+			clase[i] = [{
+				id: $(this).attr('id'),
+				alumno: $('#hdnId').val(),
+				clase: $(this).attr('clase-id'),
+				horario: $(this).attr('data-id')
+			}]
+		})
+		var datos = {
+			items: clase
+		}
+		$.post('guardar-clase/', JSON.stringify(datos), function(data, textStatus, xhr) {
+				if (data.estado == 0) {
+					alertify.error("¡Error al editar clase!")
+				}else if (data.estado == 1){
+					alertify.success("¡Clases Editadas!")
+					if (data.lleno) {
+						$.each(data.lleno, function(i, valor) {
+							alertify.error("No hay cupo en: "+ valor.clase)
+						})
+					}
+				}else if (data.estado == 3){
+					alertify.log("¡No hubo modificación!")
+					if (data.lleno) {
+						$.each(data.lleno, function(i, valor) {
+							alertify.error("No hay cupo en: "+ valor.clase)
+						})
+					}
+				}
+		})
+	}
+
+	function enviarGuardarPrenda(e) {
+		e.preventDefault()
+		var si_hay = new Boolean(true),
+				prenda = new Array()
+		$('#prenda div input[type=text]').each(function(i) {
+			if ($(this).val() != "") {
+				if ($('input[name=otorgado' + $(this).attr('id') + ']').prop('checked')) {
+					$otorgado = '1'
+				}else{
+					$otorgado = '0'
+				}
+				prenda[i] = [{
+					id: $('input[name=otorgado'+$(this).attr('id')+']').attr('id'),
+					alumno: $('#hdnId').val(),
+					prenda: $(this).attr('data-id'),
+					talla: $(this).val(),
+					otorgado: $otorgado
+				}]
+			}else{
+				si_hay = false
+			}
+		})
+		if (si_hay == true) {
+			var datos = {
+				items: prenda
+			}
+			$.post('guardar-prenda/', JSON.stringify(datos), function(data, textStatus, xhr) {
+				if (data.estado == 0) {
+					alertify.error("¡Error al editar prenda!")
+				}else if (data.estado == 1){
+					alertify.success("¡Prendas Editadas!")
+				}else if (data.estado == 3){
+					alertify.log("¡No hubo modificación!")
+				}
+			})
+		}else {
+			alertify.log("¡Complete todas las talla!")
+		}
+	}
+
+	function reconvertirFecha(fecha) {
+		nuevaFecha = moment(fecha, 'DD-MM-YYYY').format('YYYY-MM-DD')
+		return nuevaFecha
+	}
+	var picker = new Pikaday({
+		field: document.getElementById('fecha_naci'),
+		firstDay: 7,
+		format: 'DD-MM-YYYY',
+		maxDate: new Date('2020-12-31'),
+		minDate: new Date('1950-01-01'),
+		yearRange: [1950,(moment().format('YYYY'))-3] // Hasta este año menos 3
+	});
+</script>

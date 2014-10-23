@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>{% block title %}{% endblock title %}</title>
+  <link rel="shortcut icon" tyoe="image/x-icon" href="{{ STATIC_URL }}clavedo.ico" />
+  <link rel="author" ref="{{ STATIC_URL }}humans.txt" />
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/estilos.css" />
+  {% block css %}
+  {% endblock css %}
+  {% block scripts_head %}
+  {% endblock scripts_head %}
+</head>
+<!--<body oncontextmenu="return false"> PARA BLOQUEAR EL MENU CONTEXTUAL DEL CLICK DERECHO-->
+<body>
+  <header class='center-text'>
+    {% include 'include/header.html' %}
+  </header>
+  <nav>
+    {% include 'include/nav.html' %}
+  </nav>
+  <section class="contenedor-principal center-text center-block">
+      {% block contenido %}
+      {% endblock contenido %}
+  </section>
+  {# <footer class="fijo"> #}
+    {# {% include 'include/footer.html' %} #}
+  {# </footer> #}
+  <script src="{{ STATIC_URL }}js/jquery-min.js"></script>
+  <script src="{{ STATIC_URL }}js/main.js"></script>
+  <script src="{{ STATIC_URL }}js/nav.js"></script>
+  {% block scripts_body %}
+  {% endblock scripts_body %}
+</body>
+</html>

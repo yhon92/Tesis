@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Profesor{% endblock title %}
+{% block scripts_head %}
+<script src="{{ STATIC_URL }}js/validacion.js"></script>
+{% endblock scripts_head %}
+{% block contenido %}
+<section class="index_profesor">
+	<div class="nav_modulos">
+		<a href="registrar/">Registrar</a>
+		<a href="designar/">Designar</a>
+		<a href="visualizar/">Visualizar</a>
+		<a href="editar/">Editar</a>
+	</div>
+</section>
+<article id="contenedor_profesor"></article>
+{% endblock contenido %}
+{% block scripts_body%}
+<script src="{{ STATIC_URL }}js/alertify.js"></script>
+<script src="{{ STATIC_URL }}js/profesor.js"></script>
+{% endblock scripts_body %}

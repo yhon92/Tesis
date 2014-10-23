@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Horarios{% endblock title %}
+{% block css %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-timepicker.css" />
+{# <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.css" /> #}
+{% endblock css %}
+{% block scripts_head %}
+<script src="{{ STATIC_URL }}js/moment.js"></script>
+<script src="{{ STATIC_URL }}js/validacion.js"></script>
+{% endblock scripts_head %}
+{% block contenido %}
+<section class="index_horario">
+	<div class="nav_modulos">
+		<a href="crear/">Crear</a>
+		<a href="editar/">Editar</a>
+		<!-- <a href="individual/">Individual</a> -->
+	</div>
+</section>
+<article id="contenedor_horario"></article>
+{% endblock contenido %}
+{% block scripts_body%}
+<script src="{{ STATIC_URL }}js/bootstrap-timepicker.js"></script>
+<script src="{{ STATIC_URL }}js/alertify.js"></script>
+<script src="{{ STATIC_URL }}js/horario.js"></script>
+{% endblock scripts_body %}

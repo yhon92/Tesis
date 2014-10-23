@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Alumno{% endblock title %}
+{% block scripts_head %}
+<script src="{{ STATIC_URL }}js/moment.js"></script>
+<script src="{{ STATIC_URL }}js/pikaday.js"></script>
+<script src="{{ STATIC_URL }}js/validacion.js"></script>
+{% endblock scripts_head %}
+{% block contenido %}
+<section class="index_alumno">
+	<div class="nav_modulos">
+		<a href="registrar/">Registrar</a>
+		<a href="asignar/">Asignar</a>
+		<a href="visualizar/">Visualizar</a>
+		<a href="editar/">Editar</a>
+	</div>
+</section>
+<article id="contenedor_alumno"></article>
+{% endblock contenido %}
+{% block scripts_body%}
+<script src="{{ STATIC_URL }}js/alertify.js"></script>
+<script src="{{ STATIC_URL }}js/alumno.js"></script>
+{% endblock scripts_body %}

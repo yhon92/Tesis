@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Reportes{% endblock title %}
+{% block scripts_head %}
+<script src="{{ STATIC_URL }}js/moment.js"></script>
+<script src="{{ STATIC_URL }}js/pikaday.js"></script>
+<script src="{{ STATIC_URL }}js/validacion.js"></script>
+{% endblock scripts_head %}
+{% block contenido %}
+<section class="index_reportes">
+	<div class="nav_modulos">
+		{# <a href="generales/">Generales</a> #}
+		<a href="especiales/">Especiales</a>
+  {% if user.is_staff %}
+		<a href="bitacora/">Bitácora</a>
+	{% endif %}
+		<!-- <a href="individual/">Individual</a> -->
+	</div>
+</section>
+<article id="contenedor_reportes"></article>
+{% endblock contenido %}
+{% block scripts_body%}
+<script src="{{ STATIC_URL }}js/alertify.js"></script>
+<script src="{{ STATIC_URL }}js/jTPS.js"></script>
+<script src="{{ STATIC_URL }}js/reportes.js"></script>
+{% endblock scripts_body %}

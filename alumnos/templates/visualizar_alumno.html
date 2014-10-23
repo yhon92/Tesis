@@ -1,0 +1,179 @@
+<section>
+	<div class="inline-block align-top align-lef">
+		<div class="align-top">
+			<fieldset class="block">
+				<legend>Datos</legend>
+				<section class="inline-block">
+					<div>
+						<label>Nombres:</label>
+						<label class="label-mostrar">{{alumno.nombres}}</label>
+					</div>
+					<div>
+						<label>Cédula:</label>
+						<label class="label-mostrar">{{alumno.cedula}}</label>
+					</div>
+					<div>
+						<label>F. Nacimiento:</label>
+						<label class="label-mostrar">{{alumno.fecha_nacimiento|date:'d M Y'}}</label>
+					</div>
+					<div>
+						<label>F. Actualización:</label>
+						<label class="label-mostrar">{{alumno.fecha_actualizacion|date:'d M Y'}}</label>
+					</div>
+				</section>
+				<section class="inline-block align-top padding-left">
+					<div>
+						<label>Apellidos:</label>
+						<label class="label-mostrar">{{alumno.apellidos}}</label>
+					</div>
+					<div>
+						<label>Sexo:</label>
+					{% if alumno %}
+						{% if alumno.sexo == "F" %}
+							<label class="label-mostrar">Femenino</label>
+						{% else %}
+							<label class="label-mostrar">Masculino</label>
+						{% endif %}
+					{% endif %}
+					</div>
+					<div>
+						<label>F. Ingreso:</label>
+						<label class="label-mostrar">{{alumno.fecha_ingreso|date:'d M Y'}}</label>
+					</div>
+					<div>
+						<label>Estado:</label>
+					{% if alumno %}
+						{% if alumno.activo == True %}
+							<label class="label-mostrar">Activo</label>
+						{% else %}
+							<label class="label-mostrar">Inactivo</label>
+						{% endif %}
+					{% endif %}
+					</div>
+				</section>
+			</fieldset>
+		</div>
+		<div class="align-top">
+			<fieldset class="block center-text">
+				<legend>Individuales</legend>
+			{% if instrumentos %}
+				<fieldset class="transparente center-text">
+					<legend>Instrumento</legend>
+				{% for alumno in instrumentos %}
+					<div>
+						<label class="label-mostrar">{{alumno.instrumento.nombre}}</label>
+					</div>
+				{% endfor %}
+				</fieldset>
+				<fieldset class="transparente center-text">
+					<legend>Nivel</legend>
+				{% for alumno in instrumentos %}
+					<div>
+						<label class="label-mostrar">{{alumno.nivel.nombre}}</label>
+					</div>
+				{% endfor %}
+				</fieldset>
+				<fieldset class="transparente center-text">
+					<legend>Profesor</legend>
+				{% for alumno in instrumentos %}
+					<div>
+						<label class="label-mostrar">{{alumno.profesor.nombres}} {{alumno.profesor.apellidos}}</label>
+					</div>
+				{% endfor %}
+				</fieldset>
+			{% else %}
+				<p>No se ha sido asignado a ningun instrumento</p>
+			{% endif %}
+			</fieldset>
+		</div>
+	</div>
+	<div class="inline-block align-left">
+		<div class="align-top">
+			<fieldset class="block center-text">
+				<legend>Actividades</legend>
+			{% if actividades %}
+				<fieldset class="transparente align-left">
+					<legend>Actividad</legend>
+				{% for alumno in actividades %}
+					<div>
+						<label>{{alumno.actividad.tipo}} {{alumno.actividad.nombre}}</label>
+					</div>
+				{% endfor %}
+				</fieldset>
+				<fieldset class="transparente center-text min">
+					<legend>Instrumento</legend>
+				{% for alumno in actividades %}
+					<div>
+						<label class="label-mostrar">{{alumno.instrumento.nombre}} {{alumno.clasificacion}}</label>
+					</div>
+				{% endfor %}
+				</fieldset>
+			{% else %}
+				<p>No se ha sido asignado a ninguna actividad</p>
+			{% endif %}
+			</fieldset>
+		</div>
+		<div class="align-top">
+			<fieldset class="block">
+				<legend>Clases</legend>
+			{% if clases %}
+				<fieldset class="transparente center-text">
+					<legend>Clase</legend>
+				{% for alumno in clases %}
+					<div>
+						<label class="label-mostrar">{{alumno.horario.clase}}</label>
+					</div>
+				{% endfor %}
+				</fieldset>
+				<fieldset class="transparente center-text">
+					<legend>Horario</legend>
+				{% for alumno in clases %}
+					<div>
+						<label class="label-mostrar">{{alumno.horario.dia}} <span class="gris_oscuro"> de </span> {{alumno.horario.hora_desde}} <span class="gris_oscuro"> a </span> {{alumno.horario.hora_hasta}}</label>
+					</div>
+				{% endfor %}
+				</fieldset>
+			{% else %}
+				<p>No se ha sido asignado a ninguna clase</p>
+			{% endif %}
+			</fieldset>
+		</div>
+		<div class="align-top center-text">
+			<fieldset>
+				<legend>Prendas</legend>
+			{% if prendas %}
+				<fieldset class="transparente center-text">
+					<legend>Prenda</legend>
+				{% for alumno in prendas %}
+					<div>
+						<label class="label-mostrar">{{alumno.prenda}}</label>
+					</div>
+				{% endfor %}
+				</fieldset>
+				<fieldset class="transparente center-text">
+					<legend>Talla</legend>
+				{% for alumno in prendas %}
+					<div>
+						<label class="label-mostrar">{{alumno.talla}}</label>
+					</div>
+				{% endfor %}
+				</fieldset>
+				<fieldset class="transparente center-text">
+					<legend>Otorgado</legend>
+				{% for alumno in prendas %}
+					<div>
+					{% if alumno.otorgado = True %}
+						<label class="label-mostrar">SI</label>
+					{% else %}
+						<label class="label-mostrar">NO</label>
+					{% endif %}
+					</div>
+				{% endfor %}
+				</fieldset>
+			{% else %}
+				<p>No se ha sido asignado a ninguna clase</p>
+			{% endif %}
+			</fieldset>
+		</div>
+	</div>
+</section>

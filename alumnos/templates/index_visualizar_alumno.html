@@ -1,0 +1,65 @@
+{% block contenido %}
+<section>
+	<h3>Visualizar Alumno</h3>
+	<div id="buscador" class="">
+		<form class="buscar_form form" name="form_Buscar" action="" method="post">
+			<fieldset class="relative">
+				<legend>Nombre y Apellido</legend>
+				<input id="buscador" class="txt" type="text" name="txtBuscador" placeholder="Ejm: Ricardo Ochoa" required onkeypress="return soloLetras(event);" autocomplete="off">
+				<div class="resultado none"></div>
+			</fieldset>
+		</form>
+	</div>
+	<article id="mostrarDatos"></article>
+</section>
+{% endblock contenido %}
+{% block scripts_body %}
+<script>
+	var $buscador = $('input[name=txtBuscador]'),
+			$resultado = $('.resultado')
+	
+	$buscador.keyup(buscar)
+	$buscador.on('focus', buscar)
+
+	function buscar(e) {
+		if ($buscador.val() === '') {
+			$resultado.slideUp()
+			$('#mostrarDatos').html('')
+		}else{
+			if (recorrerString($buscador.val())) {
+				var datos = {
+					nombre: $buscador.val()
+				}
+				$.post('rastrear-alumno/', datos, function(data, textStatus, xhr) {
+					cargarResultado(data)
+				})
+			}
+		}
+	}
+
+	function cargarResultado (data) {
+		var $div = $('<div>'),
+				$a = $('<a class="block">')
+		$resultado.html('')
+
+		if (data.alumnos.length != 0) {
+			$.each(data.alumnos, function(i, valor) {
+				$('<a class="block item" data-id="'+valor.id+'">').html(valor.nombres +' '+ valor.apellidos).appendTo($div)
+			})
+		} else {
+			$('<a class="block item center-text">').html('No hay resultado').appendTo($div)
+		}
+
+		$div.appendTo($resultado)
+		$resultado.slideDown()
+		$('.item').on('click', buscarDatos)
+	}
+
+	function buscarDatos(e) {
+		e.preventDefault()
+		$resultado.hide()
+		$id = $(this).attr('data-id')
+		$('#mostrarDatos').load('buscar-visualizar-alumno/' + $id)
+	}
+</script>
+{% endblock scripts_body %}

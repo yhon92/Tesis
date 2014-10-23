@@ -1,0 +1,66 @@
+{% block contenido %}
+<section id="contenedor-registar">
+	<div id="etiquetas">
+		<form class="registrar_form form" name="form_Registrar" action="" method="post">
+			<h3>Registar Profesor</h3>
+			<fieldset>
+				<legend>Datos Personales</legend>
+				<div>
+					<label for="nombres">Nombres:</label>
+					<input id="nombres" class="txt" type="text" name="txtNombres" placeholder="Ejm: Roberto" required onkeypress="return soloLetras(event);" autocomplete="off">
+				</div>
+				<div>
+					<label for="apellidos">Apellidos:</label>
+					<input id="apellidos" class="txt" type="text" name="txtApellidos" placeholder="Ejm: Serizo" required onkeypress="return soloLetras(event);" autocomplete="off">
+				</div>
+				<div>
+					<label for="cedula">Cédula:</label>
+					<input id="cedula" class="txt" type="text" name="txtCedula" placeholder="Ejm: 1234567" required onkeypress="return soloNum(event);" onkeyup="format(this);" autocomplete="off">
+				</div>
+			</fieldset>
+			<div>
+			<button class="boton-on" id="registrarProfesor">Registrar</button>
+			</div>
+		</form>
+	</div>
+</section>
+{% endblock contenido %}
+{% block scripts_body %}
+<script>
+	$("#registrarProfesor").on('click', enviarRegistrarProfesor)
+
+	function enviarRegistrarProfesor(e) {
+		e.preventDefault();
+		var $nombres = $('input[name=txtNombres'), 
+				$apellidos = $('input[name=txtApellidos]'),
+				$cedula = $('input[name=txtCedula]')
+					// $fecha_ingr = $('#fecha_ingr')
+		if ($cedula.val() != '' && $nombres.val() != '' && $apellidos.val() != '') {
+			if (validarString('Nombres', $nombres.val()) && validarString('Apellidos', $apellidos.val()) && validarCedula($cedula.val())) {
+				var	datos = {
+						cedula: $cedula.val(), 
+						nombres: $nombres.val(), 
+						apellidos: $apellidos.val()
+				}
+				$.post('registrar-profesor/', datos , function(data, textStatus, xhr) {
+					if (data.estado == 0) {
+						alertify.error("¡Error al registrar!")
+					}else if (data.estado == 1){
+						alertify.success("¡Registro Exitoso!")
+							$cedula.val('')
+							$nombres.val('')
+							$apellidos.val('')
+					}else if (data.estado == 2){
+						alertify.error("¡Profesor ya registrado!")
+							$cedula.val('')
+							$nombres.val('')
+							$apellidos.val('')
+					}
+				})
+			}
+		}else {
+			alertify.log("¡Complete todos los campos!")
+		}
+	}
+</script>
+{% endblock scripts_body %}

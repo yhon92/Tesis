@@ -1,0 +1,46 @@
+{% extends "base_pdf_horizontal.html" %}
+{% block header %}
+	<h1>Catedra de {{clase.catedra}}</h1>
+	<p>Nivel: <strong>{{clase.nivel}}</strong> Sección: <strong>{{clase.seccion}}</strong></p>
+	{# <p>Asistente: <strong>{{asistente.profesor}}</strong></p> #}
+{% endblock header %}
+{% block header_table %}
+	<th width="50px">Nº</th>
+	<th width="380px">Nombres y Apellidos</th>
+	<th width="100px">Cédula</th>
+	<th width="100px">Fecha N.</th>
+	<th width="60px">Edad</th>
+	<th width="60px">Sexo</th>
+	{% if modulo == 'reportes' %}
+	<th width="130px">Estado</th>
+	{% endif %}
+{% endblock header_table %}
+{% block content %}
+	{% if alumnos %}
+		{% if modulo == 'reportes' %}
+			{% for alumno in alumnos %}
+				<tr>
+					<td width="50px">{{alumno.num}}</td>
+					<td width="380px">{{alumno.nombre}}</td>
+					<td width="100px">{{alumno.cedula}}</td>
+					<td width="100px">{{alumno.fecha|date:'d-m-Y'}}</td>
+					<td width="60px">{{alumno.edad}}</td>
+					<td width="60px">{{alumno.sexo}}</td>
+					<td width="130px">{{alumno.estado}}</td>
+				</tr>
+			{% endfor %}
+		{% else %}
+			{% for alumno in alumnos %}
+				<tr>
+					<td width="50px">{{alumno.num}}</td>
+					<td width="380px">{{alumno.alumno}}</td>
+					<td width="100px">{{alumno.alumno.cedula}}</td>
+					<td width="100px">{{alumno.alumno.fecha_nacimiento|date:'d-m-Y'}}</td>
+					<td width="60px">{{alumno.edad}}</td>
+					<td width="60px">{{alumno.alumno.sexo}}</td>
+					{# <td width="130px">{{alumno.instrumento}}</td> #}
+				</tr>
+			{% endfor %}
+		{% endif %}
+	{% endif %}
+{% endblock content %}

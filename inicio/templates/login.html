@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Entrar al Sistema</title>
+  <link rel="shortcut icon" tyoe="image/x-icon" href="{{ STATIC_URL }}clavedo.ico" />
+  <link rel="author" ref="{{ STATIC_URL }}humans.txt" />
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/estilos.css" />
+</head>
+<body>
+  <header class='center'>
+    {% include 'include/header.html' %}
+  </header>
+  <h2 class='center-text'>Bienvenid@ al Sistema</h2>
+  <section class='center-text'>
+    <form class="form login" name="login_frm" method="post" enctype="application/x-www-form-urlencoded">
+    {% if form.errors %}
+      <div class="error center-block">
+        <p class="login"><strong>ERROR: </strong>Por favor verifique el usuario y la contraseña.</p>
+      </div>
+    {% endif %}
+      <fieldset class="center-text">
+      <legend>Iniciar Sesión</legend>
+        {% csrf_token %}
+        <!-- <label for="usuario_login">Usuario:</label> -->
+        <input type="text" class="center-text txt loginUsuario" name="username" placeholder="Ingrese Usuario"  autocomplete="off" required>
+        <!-- <label for="password">Contraseña:</label> -->
+        <input type="password" class="center-text txt loginPassword" name="password" placeholder="Ingrese Contraseña"  autocomplete="off" required>
+        <button class="boton-on" type="submit" value="entrar">Entrar</button>
+        {# <button id="btnSalir" class="boton_2" type="button"value="salir" disabled="true">Salir</button> #}
+      </fieldset>
+    </form>
+  </section>
+  <footer class="fijo">
+  </footer>
+</body>
+</html>

@@ -1,0 +1,91 @@
+{% if bitacoras %}
+<style>
+	table {
+		font-family: "QuickSand-Regular";
+		font-size: 14px;
+		border-collapse: initial;
+	}
+	#tablaBitacora thead th {
+		white-space: nowrap;
+		overflow-x:hidden;
+		padding: 3px;
+	}
+	#tablaBitacora tbody td {
+		padding: 3px;
+	}
+</style>
+<table id="tablaBitacora" align="center" style="border: 1px solid #ccc;" cellspacing="0" width="900px">
+	<thead>
+		<tr>
+			<th sort="nombre" style="width: 150px">Usuario</th>
+			<th sort="modulo" style="width: 120px">Módulo</th>
+			<th sort="fecha" style="width: 100px">Fecha</th>
+			<th sort="accion" style="width: 75px">Acción</th>
+			<th sort="descripcion">Descripción</th>
+			<!-- <th sort="identificador"></th> El atributo sort es para que sea ordenable-->
+		</tr>
+	</thead>
+	<tbody>
+		{% for bitacora in bitacoras %}
+			<tr>
+				<td>{{bitacora.username}}</td>
+				<td>{{bitacora.modulo}}</td>
+				<td>{{bitacora.fecha|date:'d-m-Y h:i:s a'}}</td>
+				<td>{{bitacora.accion}}</td>
+				<td>{{bitacora.mensaje}}</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+		<tfoot class="nav">
+			<tr>
+				<td colspan=7>
+						<div class="pagination"></div>
+						<div class="paginationTitle">Página</div>
+						<div class="selectPerPage"></div>
+						<div class="status"></div>
+				</td>
+			</tr>
+		</tfoot>
+</table>
+<script>
+$(document).ready(function () {
+	$('#tablaBitacora').jTPS({perPages:[5,15,30,50,'Todos'], scrollStep:1, scrollDelay:30, 
+		clickCallback:function () {     
+			// target table selector
+			var table = '#tablaBitacora'
+			// store pagination + sort in cookie 
+			document.cookie = 'jTPS=sortasc:' + $(table + ' .sortableHeader').index($(table + ' .sortAsc')) + ',' +
+			'sortdesc:' + $(table + ' .sortableHeader').index($(table + ' .sortDesc')) + ',' +
+			'page:' + $(table + ' .pageSelector').index($(table + ' .hilightPageSelector')) + ';'
+		}
+	})
+	// reinstate sort and pagination if cookie exists
+	var cookies = document.cookie.split(';')
+	for (var ci = 0, cie = cookies.length; ci < cie; ci++) {
+		var cookie = cookies[ci].split('=')
+		if (cookie[0] == 'jTPS') {
+			var commands = cookie[1].split(',')
+			for (var cm = 0, cme = commands.length; cm < cme; cm++) {
+				var command = commands[cm].split(':')
+				if (command[0] == 'sortasc' && parseInt(command[1]) >= 0) {
+					$('#tablaBitacora .sortableHeader:eq(' + parseInt(command[1]) + ')').click()
+				} else if (command[0] == 'sortdesc' && parseInt(command[1]) >= 0) {
+					$('#tablaBitacora .sortableHeader:eq(' + parseInt(command[1]) + ')').click().click()
+				} else if (command[0] == 'page' && parseInt(command[1]) >= 0) {
+					$('#tablaBitacora .pageSelector:eq(' + parseInt(command[1]) + ')').click()
+				}
+			}
+		}
+	}
+	// bind mouseover for each tbody row and change cell (td) hover style
+	$('#tablaBitacora tbody tr:not(.stubCell)').bind('mouseover mouseout',
+		function (e) {
+			// hilight the row
+			e.type == 'mouseover' ? $(this).children('td').addClass('hilightRow') : $(this).children('td').removeClass('hilightRow')
+		}
+	)
+})
+</script>
+{% else %}
+<p>No hay bitacora que mostrar</p>
+{% endif %}

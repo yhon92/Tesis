@@ -1,0 +1,125 @@
+{% block contenido %}
+<section>
+	<h3>Designar Profesor</h3>
+	<div id="buscador" class="">
+		<fieldset>
+			<legend>Nombre y Apellido</legend>
+			<select id="profesor" class="list large" name="lstProfesor" required>
+				<option value="">Seleccionar</option>
+			{% for profesor in profesores %}
+				<option value="{{profesor.id}}">{{profesor}}</option>				
+			{% endfor %}
+			</select>
+		</fieldset>
+	</div>
+	<div id="datos" class="inline-block align-top none-important">
+		<fieldset>
+			<legend>Datos del Profesor</legend>
+			<div>
+				<label>Nombres:</label>
+				<label class="block label-mostrar" id="nombres"></label>
+			</div>
+			<div>
+				<label>Apellidos:</label>
+				<label class="block label-mostrar" id="apellidos"></label>
+			</div>
+			<div>
+				<label>Cédula:</label>
+				<label class="block label-mostrar" id="cedula"></label>
+			</div>
+			<div>
+				<label>Estado:</label>
+				<label class="block label-mostrar" id="estado"></label>
+			</div>
+		</fieldset>
+	</div>
+	<div id="designar" class="center inline-block none-important">
+		<fieldset>
+			<legend>Designar</legend>
+			<div>
+				<label for="actividad">Actividad:</label>
+				<select id="actividad" class="list large" name="lstActividad" required>
+					<option value="">Seleccionar</option>
+					{% for actividad in actividades %}
+						<option value="{{actividad.id}}">{{actividad.tipo.nombre}} {{actividad.nombre}}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div>
+				<label for="cargo">Cargo</label>
+				<select id="cargo" class="list" name="lstCargo" required>
+					<option value="">Seleccionar</option>
+					{% for cargo in cargos %}
+					<option value="{{cargo.id}}">{{cargo.nombre}}</option>
+					{% endfor %}
+				</select>
+			</div>
+		</fieldset>
+		<div>
+			<button class="boton-on" id="designarProfesor">Designar</button>
+		</div>
+	</div>
+</section>
+{% endblock contenido %}
+{% block scripts_body %}
+<script>
+	var $profesor = $('select[name=lstProfesor]'),
+			$actividad = $('select[name=lstActividad]'),
+			$cargo = $('select[name=lstCargo]')
+
+	$($profesor).on('change', buscarProfesor)
+	$('#designarProfesor').on('click', designarProfesor )
+
+	function buscarProfesor() {
+		var $id = $(this).val()
+		if (!$id) {
+			$('#datos').addClass('none-important')
+			$('#designar').addClass('none-important')
+		}else{
+			$.get('buscar-profesor/' + $id, mostrarDatos )
+		}
+	}
+
+	function mostrarDatos(data) {
+		// console.log(data)
+		$('#nombres').html(data.nombres)
+		$('#apellidos').html(data.apellidos)
+		$('#cedula').html(data.cedula)
+		if (data.activo) {
+			$('#estado').html('Activo')
+			$('#designar').removeClass('none-important')
+		}else{
+			$('#estado').html('Inactivo')
+			$('#designar').addClass('none-important')
+		}
+		// $('#').val()
+		$('#datos').removeClass('none-important')
+	}
+
+	function designarProfesor(e) {
+		e.preventDefault()
+		var datos = {
+			actividad: $actividad.val(),
+			profesor: $profesor.val(),
+			cargo: $cargo.val()
+		}
+		if ($actividad.val() != "" && $cargo.val() != "") {
+			$.post('designar-profesor/', datos, function(data, textStatus, xhr) {
+				if (data.estado == 0) {
+					alertify.error("¡Error al designar actividad!")
+				}else if (data.estado == 1){
+					alertify.success("¡Designación Realizada!")
+				}else if (data.estado == 2){
+					alertify.error("¡Profesor ya desginado a esta actividad!")
+				}else if (data.estado == 22){
+					alertify.error("¡Cargo ocupado!")
+				}
+			})
+		}else {
+			alertify.log("¡Seleccione todas las opciones!")
+		}
+	}
+
+</script>
+
+{% endblock scripts_body %}

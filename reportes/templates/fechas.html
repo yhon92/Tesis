@@ -1,0 +1,102 @@
+<fieldset id="fechas">
+	<legend>Criterios</legend>
+	<div class="block">
+		<div class="inline-block">
+			<label class="block" for="fecha">Fecha:</label>
+			<select class="list large" name="lstFecha">
+				<option value="">Seleccione</option>
+				<option value="fecha_nacimiento">Fecha de Nacimiento</option> 
+				<option value="fecha_ingreso">Fecha de Ingreso</option>
+				<option value="fecha_actualizacion">Fecha de Actualización</option>
+			</select>
+		</div>
+		<div class="inline-block">
+			<label class="block" for="cedula">Cédula:</label>
+			<select class="list" name="lstCedula" id="cedula">
+				<option value="todos">Todos</option>
+				<option value="0">Con cédula</option>
+				<option value="1">Sin cédula</option>
+			</select>
+		</div>
+	</div>
+	<div class="block center-text">
+		<div class="inline-block">
+			<label class="block" for="estado">Estado:</label>
+			<select class="list" name="lstEstado" id="estado">
+				<option value="todos">Todos</option>
+				<option value="1">Activo</option>
+				<option value="0">Inactivo</option>
+			</select>
+		</div>
+		<div class="inline-block">
+			<label class="block" for="sexo">Sexo:</label>
+			<select class="list" name="lstSexo" id="sexo">
+				<option value="todos">Todos</option>
+				<option value="F">Femenino</option>
+				<option value="M">Masculino</option>
+			</select>
+		</div>
+	</div>
+	<div class="block center-text">
+		<div class="inline-block">
+			<label class="block" for="desde">Desde:</label>
+			<input id="desde" class="caldr" type="text" name="txtDesde" placeholder="Haga Click" autocomplete="off" onkeydown="return ningunaTecla(event);" required>
+		</div>
+		<div class="inline-block">
+			<label class="block" for="hasta">Hasta:</label>
+			<input id="hasta" class="caldr" type="text" name="txtHasta" placeholder="Haga Click" autocomplete="off" onkeydown="return ningunaTecla(event);" required>
+		</div>
+	</div>
+	<div class="center-text">
+		<button class="boton-on" id="mostrarReporteFecha">Mostrar</button>
+	</div>
+</fieldset>
+<script>
+	$('input[name=txtDesde').val(moment().format('DD-MM-YYYY'))
+	$('input[name=txtHasta').val(moment().format('DD-MM-YYYY'))
+
+	$('#mostrarReporteFecha').on('click', function (e) {
+			e.preventDefault();
+			var $fecha = $('select[name=lstFecha]'),
+					$cedula = $('select[name=lstCedula]'),
+					$estado = $('select[name=lstEstado]'),
+					$sexo = $('select[name=lstSexo]'),
+					$desde = $('input[name=txtDesde'),
+					$hasta = $('input[name=txtHasta')
+			if ($fecha.val() != "" && $cedula.val() != "" && $estado.val() != "" && $sexo.val() != "" && $desde.val() != "" && $hasta.val() != "") {
+				if (compararFechas($desde.val(), $hasta.val())) {
+					var	datos = {
+						fecha: $fecha.val(),
+						cedula: $cedula.val(),
+						estado: $estado.val(),
+						sexo: $sexo.val(),
+						desde: reconvertirFecha($desde.val()),
+						hasta: reconvertirFecha($hasta.val())
+					}
+					nuevaPestana('mostrar-fecha/', datos)
+				}else{
+					alertify.log("¡Fecha Invalida!")
+				}
+			}else {
+				alertify.log("¡Seleccione todas las opciones!")
+			}
+		})
+
+		var picker = new Pikaday(
+		{
+			field: document.getElementById('desde'),
+			firstDay: 7,
+			maxDate: new Date(moment().format('YYYY-MM-DD')+1),
+			minDate: new Date('1950-01-01'),
+			yearRange: [1950,moment().format('YYYY')],
+		})
+
+		var picker = new Pikaday(
+		{
+			field: document.getElementById('hasta'),
+			firstDay: 7,
+			maxDate: new Date(moment().format('YYYY-MM-DD')+1),
+			minDate: new Date('1950-01-01'),
+			yearRange: [1950,moment().format('YYYY')],
+		})
+</script>

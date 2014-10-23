@@ -1,0 +1,88 @@
+<fieldset id="clase">
+	<legend>Criterios</legend>
+	<div class="block">
+		<div class="inline-block">
+			<label class="block" for="catedra">Cátedra:</label>
+			<select id="catedra"class="list" name="lstCatedra">
+				<option value="">Seleccionar</option>
+			{% for catedra in catedras %}
+				<option value="{{catedra.id}}">{{catedra.nombre}}</option>
+			{% endfor %}
+			</select>
+		</div>
+		<div class="inline-block">
+			<label class="block" for="nivel">Nivel:</label>
+			<select id="nivel" class="list" name="lstNivel">
+				<option value="todos">Todos</option>
+				{% for nivel_i in niveles %}
+				<option value="{{nivel_i.id}}">{{nivel_i.nombre}}</option>
+				{% endfor %}
+			</select>
+		</div>
+	</div>
+	<div class="block center-text">
+		<div class="inline-block">
+			<label class="block" for="seccion">Sección:</label>
+			<select id="seccion" class="list" name="lstSeccion">
+				<option value="todos">Todos</option>
+				{% for seccion in secciones %}
+				<option value="{{seccion.id}}">{{seccion}}</option>
+				{% endfor %}
+			</select>
+		</div>
+		<div class="inline-block">
+			<label class="block" for="cedula">Cédula:</label>
+			<select class="list" name="lstCedula" id="cedula">
+				<option value="todos">Todos</option>
+				<option value="0">Con cédula</option>
+				<option value="1">Sin cédula</option>
+			</select>
+		</div>
+	</div>
+	<div class="block center-text">
+		<div class="inline-block">
+			<label class="block" for="estado">Estado:</label>
+			<select class="list" name="lstEstado" id="estado">
+				<option value="todos">Todos</option>
+				<option value="1">Activo</option>
+				<option value="0">Inactivo</option>
+			</select>
+		</div>
+		<div class="inline-block">
+			<label class="block" for="sexo">Sexo:</label>
+			<select class="list" name="lstSexo" id="sexo">
+				<option value="todos">Todos</option>
+				<option value="F">Femenino</option>
+				<option value="M">Masculino</option>
+			</select>
+		</div>
+	</div>
+	<div>
+	<div class="center-text">
+		<button class="boton-on" id="mostrarReporteInstrumento">Mostrar</button>
+	</div>
+</fieldset>
+<script>
+	$('#mostrarReporteInstrumento').on('click',	function (e) {
+			e.preventDefault()
+			var $catedra = $('select[name=lstCatedra]'),
+					$nivel = $('select[name=lstNivel]'),
+					$seccion = $('select[name=lstSeccion]'),
+					$cedula = $('select[name=lstCedula]'),
+					$estado = $('select[name=lstEstado]'),
+					$sexo = $('select[name=lstSexo]')
+			if ($catedra.val() != "" && $nivel.val() != "" && $seccion.val() != "" && $cedula.val() != "" && $estado.val() != "" && $sexo.val() != "") {
+				var	datos = {
+					catedra: $catedra.val(), 
+					nivel: $nivel.val(),
+					seccion: $seccion.val(),
+					cedula: $cedula.val(),
+					estado: $estado.val(),
+					sexo: $sexo.val()
+				}
+				nuevaPestana('mostrar-catedra/', datos)
+			}else {
+				alertify.log("¡Seleccione una Cátedra!")
+			}
+		})
+</script>

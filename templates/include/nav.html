@@ -1,0 +1,16 @@
+{# <section id="contenedor-menu"> #}
+  <ul class="menu">
+    <li><a href="/">Inicio</a></li>
+    <li><a href="/alumnos/">Alumnos</a></li>
+    <li><a href="/profesores/">Profesores</a></li>
+    <li><a href="/clases/">Clases</a></li>
+    <li><a href="/actividades/">Actividades</a></li>
+    <li><a href="/horarios/">Horarios</a></li>
+    <li><a href="/reportes/">Reportes</a></li>
+    {% if user.is_staff %}
+    <li><a href="/admin">Ir Admin</a></li>
+    {% endif %}
+    <li><a class="salir" href="/salir/">Salir</a></li>
+    <!-- <input class="txt" type="text" name="txtBuscar" placeholder="Buscar..."> -->
+  </ul>
+{# </section> #}

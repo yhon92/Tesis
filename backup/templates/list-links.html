@@ -1,0 +1,7 @@
+{% extends "import-export.html" %}
+
+{% block the_form %} 
+    <a style="font-size: 20px; line-height: 2; font-weight: bold;" href="{% url 'export_database' %}">Respaldar Base de Datos</a><br>
+    <a style="font-size: 20px; line-height: 2; font-weight: bold;" href="{% url 'import_database' %}">Restaurar Base de Datos</a><br>
+    <!--<a href="{% url 'export_mediaroot' %}">Respaldar Directorio Media</a> <br>-->
+{% endblock %}

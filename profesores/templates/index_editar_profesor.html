@@ -1,0 +1,36 @@
+{% block contenido %}
+<section>
+	<h3>Editar Profesor</h3>
+	<div id="buscador" class="">
+		<form class="buscar_form form" name="form_Buscar" action="" method="post">
+			<fieldset class="relative">
+				<legend>Nombre y Apellido</legend>
+					<select id="profesor" class="list large" name="lstProfesor" required>
+					{% if profesores %}
+						<option value="">Seleccionar</option>
+						{% for profesor in profesores %}
+							<option value="{{profesor.id}}">{{profesor}}</option>				
+						{% endfor %}
+					{% endif %}
+					</select>
+			</fieldset>
+		</form>
+	</div>
+	<article id="mostrarDatos"></article>
+</section>
+{% endblock contenido %}
+{% block scripts_body %}
+<script>
+	var $profesor = $('select[name=lstProfesor]')
+	$($profesor).on('change', buscar)
+
+	function buscar() {
+		var $id = $(this).val()
+		if (!$id) {
+			$('#mostrarDatos').html('')
+		}else{
+			$('#mostrarDatos').load('buscar-editar-profesor/' + $id)
+		}
+	}
+</script>
+{% endblock scripts_body %}

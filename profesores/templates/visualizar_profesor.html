@@ -1,0 +1,120 @@
+<section>
+	<div class="inline-block align-top align-lef">
+		<div class="align-top">
+			<fieldset class="block">
+				<legend>Datos</legend>
+				<section class="inline-block">
+					<div>
+						<label>Nombres:</label>
+						<label class="label-mostrar">{{profesor.nombres}}</label>
+					</div>
+					<div>
+						<label>Cédula:</label>
+						<label class="label-mostrar">{{profesor.cedula}}</label>
+					</div>
+				</section>
+				<section class="inline-block align-top padding-left">
+					<div>
+						<label>Apellidos:</label>
+						<label class="label-mostrar">{{profesor.apellidos}}</label>
+					</div>
+					<div>
+						<label>Estado:</label>
+					{% if profesor %}		
+						{% if profesor.activo == True %}
+							<label class="label-mostrar">Activo</label>
+						{% else %}
+							<label class="label-mostrar">Inactivo</label>
+						{% endif %}
+					{% endif %}
+					</div>
+				</section>
+			</fieldset>
+		</div>
+		<div class="align-top">
+			<fieldset class="block center-text">
+				<legend>Individuales</legend>
+			{% if instrumentos %}
+				<fieldset class="transparente center-text">
+					<legend>Alumnos</legend>
+				{% for profesor in instrumentos %}
+					<div>
+						<label class="label-mostrar">{{profesor.alumno}}</label>
+					</div>
+				{% endfor %}
+				</fieldset>
+				<fieldset class="transparente center-text">
+					<legend>Instrumento</legend>
+				{% for profesor in instrumentos %}
+					<div>
+						<label class="label-mostrar">{{profesor.instrumento}}</label>
+					</div>
+				{% endfor %}
+				</fieldset>
+				<fieldset class="transparente center-text">
+					<legend>Nivel</legend>
+				{% for profesor in instrumentos %}
+					<div>
+						<label class="label-mostrar">{{profesor.nivel}}</label>
+					</div>
+				{% endfor %}
+				</fieldset>
+			{% else %}
+				<p>No se ha sido asignado a como profesor de ningun instrumento</p>
+			{% endif %}
+			</fieldset>
+		</div>
+	</div>
+	<div class="inline-block align-left">
+		<div class="align-top">
+			<fieldset class="block center-text">
+				<legend>Actividades</legend>
+			{% if actividades %}
+				<fieldset class="transparente align-left">
+					<legend>Actividad</legend>
+				{% for profesor in actividades %}
+					<div>
+						<label>{{profesor.actividad.tipo}} {{profesor.actividad.nombre}}</label>
+					</div>
+				{% endfor %}
+				</fieldset>
+				<fieldset class="transparente center-text min">
+					<legend>Cargo</legend>
+				{% for profesor in actividades %}
+					<div>
+						<label class="label-mostrar">{{profesor.cargo}}</label>
+					</div>
+				{% endfor %}
+				</fieldset>
+			{% else %}
+				<p>No se ha sido designado a ninguna actividad</p>
+			{% endif %}
+			</fieldset>
+		</div>
+		<div class="align-top">
+			<fieldset class="block">
+				<legend>Clases</legend>
+			{% if clases %}
+				<fieldset class="transparente center-text">
+					<legend>Clase</legend>
+				{% for profesor in clases %}
+					<div>
+						<label class="label-mostrar">{{profesor.clase}}</label>
+					</div>
+				{% endfor %}
+				</fieldset>
+				<fieldset class="transparente center-text">
+					<legend>Horario</legend>
+				{% for profesor in clases %}
+					<div>
+						<label class="label-mostrar">{{profesor.dia}} <span class="gris_oscuro"> de </span> {{profesor.hora_desde}} <span class="gris_oscuro"> a </span> {{profesor.hora_hasta}}</label>
+					</div>
+				{% endfor %}
+				</fieldset>
+			{% else %}
+				<p>No se ha sido asignado a ninguna clase</p>
+			{% endif %}
+			</fieldset>
+		</div>
+	</div>
+</section>

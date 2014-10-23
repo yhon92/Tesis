@@ -1,0 +1,80 @@
+<div id="actividad">
+	<fieldset class="center-text">
+		<div class="center-text">
+			<select id="orquesta" class="list large" name="lstActividad">
+				<option value="">Seleccionar</option>
+					{% for actividad in actividades %}
+						<option value="{{actividad.id}}">{{actividad.tipo.nombre}} {{actividad.nombre}}</option>
+					{% endfor %}
+			</select>
+		</div>
+		<div class="block">
+			<fieldset>
+				<legend>Instrumento</legend>
+				<select class="list" name="lstInstrumentoActividad">
+					<option value="">Seleccionar</option>
+				{% if individuales %}
+					<optgroup label="Clásicos">
+					{% for individual in individuales %}
+						<option value="{{individual.instrumento.id}}">{{individual.instrumento}}</option>
+					{% endfor %}
+					</optgroup>
+				{% else %}
+					<optgroup label="Clásicos">
+					<option value="">No Tiene</option>
+					</optgroup>
+				{% endif %}
+					<optgroup label="Voz">
+					{% for instrumento in instrumentos %}
+						<option value="{{instrumento.id}}">{{instrumento}}</option>
+					{% endfor %}
+					</optgroup>
+				</select>
+			</fieldset>
+		</div>
+		<div class="block">
+			<fieldset>
+				<legend>Clasificación</legend>
+				<select class="list" name="lstClasificacion">
+					<option value="0">Seleccionar</option>
+					<option value="">No Aplica</option>
+					<option value="I">I</option>
+					<option value="II">II</option>
+					<option value="III">III</option>
+					<option value="IV">IV</option>
+				</select>
+			</fieldset>
+		</div>
+	</fieldset>
+	<div>
+		<button class="boton-on" id="asignarActividiad">Asignar</button>
+	</div>
+</div>
+<script>
+	var $actividad = $('select[name=lstActividad]'),
+			$instrumento = $('select[name=lstInstrumentoActividad]'),
+			$clasificacion = $('select[name=lstClasificacion]')
+
+	$('#asignarActividiad').on('click', function(e) {
+		e.preventDefault()
+		if ($actividad.val() != "" && $instrumento.val() != "" && $clasificacion.val() != "0") {
+			var datos = {
+				alumno: $('#hdnId').val(),
+				actividad: $actividad.val(),
+				instrumento: $instrumento.val(),
+				clasificacion: $clasificacion.val()
+			}
+			$.post('asignar-actividad/', datos, function(data, textStatus, xhr) {
+				if (data.estado == 0) {
+					alertify.error("¡Error al asignar actividad!")
+				}else if (data.estado == 1){
+					alertify.success("¡Actividad Asignada!")
+				}else if (data.estado == 2){
+					alertify.error("¡Actividad ya asignada!")
+				}
+			})
+		}else {
+			alertify.log("¡Seleccione todas las opciones!")
+		}
+	})
+</script>

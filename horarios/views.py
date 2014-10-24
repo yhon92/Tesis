@@ -67,7 +67,7 @@ def crear_horario(request):
 @login_required
 def editar(request):
 	dias = Dia.objects.all().order_by('id')
-	horarios = Horario.objects.all()
+	horarios = Horario.objects.all().order_by('clase__catedra', 'clase__nivel', 'clase__seccion')
 	template = 'editar_horario.html'
 	return render(request, template, locals())
 
@@ -85,7 +85,19 @@ def guardar_horario(request):
 		horario = Horario.objects.filter(id=request.POST['id'])
 		for dato in horario:
 			if str(dato.dia.id) != request.POST['dia'] or str(dato.inicio) != request.POST['desde'] or str(dato.final) != request.POST['hasta']:
-				antes = 'Clase: '+'"'+ str(dato.clase) +'"'+', Dia: '+'"'+ str(dato.dia) +'"'+', De: '+'"'+ str(dato.inicio) +'"'+' a '+'"'+ str(dato.final) +'"'
+				dato_p = Clase.objects.get(id=dato.clase.id)
+				clases = Clase.objects.filter(profesor_id=dato_p.profesor.id).exclude(id=dato.clase.id)
+				for clase in clases:
+					horarios = Horario.objects.filter(clase_id=clase.id, dia_id=request.POST['dia'])
+					for hora in horarios:
+						if choqueHorario(request.POST['desde'], request.POST['hasta'], hora.inicio, hora.final):
+							choque = True
+				if 'choque' in locals():
+					print 'Conflicto'
+					return HttpResponse(json.dumps({'choque': 'true'}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+				else:
+					print 'Horario Aceptable'
+					antes = 'Clase: '+'"'+ str(dato.clase) +'"'+', Dia: '+'"'+ str(dato.dia) +'"'+', De: '+'"'+ str(dato.inicio) +'"'+' a '+'"'+ str(dato.final) +'"'
 			else:
 				return HttpResponse(json.dumps({'estado': 3}), content_type="application/json; charset=uft8")
 		if 'antes' in locals():
@@ -102,6 +114,8 @@ def guardar_horario(request):
 		raise Http404
 
 def choqueHorario(nuevoInicio, nuevoFinal, inicio, final):
+	
+	print nuevoInicio, nuevoFinal, inicio, final
 	if nuevoInicio >= final and nuevoFinal >= inicio or nuevoInicio <= final and nuevoFinal <= inicio:
 		return False
 	else:

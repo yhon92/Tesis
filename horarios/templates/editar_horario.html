@@ -69,12 +69,16 @@
 						hasta: $hasta.val()
 					}
 					$.post('guardar-horario/', datos , function(data, textStatus, xhr) {
-						if (data.estado == 0) {
-							alertify.error("¡Error al guardar los datos!")
-						}else if (data.estado == 1){
-							alertify.success("¡Horario Editado!")
-						}else if (data.estado == 3){
-							alertify.log("¡No hubo modificación!")
+						if (data.choque) {
+							alertify.log('¡Choque de Horarios!')
+						}else {
+							if (data.estado == 0) {
+								alertify.error("¡Error al guardar los datos!")
+							}else if (data.estado == 1){
+								alertify.success("¡Horario Editado!")
+							}else if (data.estado == 3){
+								alertify.log("¡No hubo modificación!")
+							}
 						}
 					})
 				}

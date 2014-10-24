@@ -1,9 +1,9 @@
 import datetime, time
 
-time.strftime("%I:%M %P")
+time.strftime('%I:%M %P')
 # '08:57 pm'
 
-time.strftime("%H:%M %p")
+time.strftime('%H:%M %p')
 # '20:56 PM'
 
 time.strftime('09:30 pm') > time.strftime('09:02 pm')

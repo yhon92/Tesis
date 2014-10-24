@@ -1,6 +1,6 @@
 FALTANTE
 
-VALIDAR LOS HORARIOS DE LOS PROFESORES Y LOS ALUMNOS
+VALIDAR EL CHOQUE DE LOS HORARIOS DE LOS PROFESORES Y LOS ALUMNOS
 VALIDAR QUE NO SE INSCRIBAN ni EDITEN LOS ALUMNOS A UNA MISMA CATEDRA CON DIFERENTES AÑOS O SECCIONES  ?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿
 
 
@@ -35,6 +35,9 @@ if (data.estado == 0) {
 }else if (data.estado == 3){
 	
 }
+
+Los alumnos deben relacionarce con las clase-catedras y no con los horarios para que una clase pueda tener mas de un dia-horario
+
 Reestructurar la base de datos con una tabla para orquestas, otra para coros y una de voces, y la de actividades que sea para talleres, seccionales, y otros
 
 COROS

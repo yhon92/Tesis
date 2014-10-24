@@ -63,12 +63,16 @@
 						hasta: $hasta.val()
 					}
 					$.post('crear-horario/', datos , function(data, textStatus, xhr) {
-						if (data.estado == 0) {
-							alertify.error("¡Error al establecer horario!")
-						}else if (data.estado == 1){
-							alertify.success("¡Horario Establecido!")
-						}else if (data.estado == 2){
-							alertify.error("¡Horario ya establecido!")
+						if (data.choque) {
+							alertify.log('¡Choque de Horarios!')
+						}else{
+							if (data.estado == 0) {
+								alertify.error("¡Error al establecer horario!")
+							}else if (data.estado == 1){
+								alertify.success("¡Horario Establecido!")
+							}else if (data.estado == 2){
+								alertify.error("¡Horario ya establecido!")
+							}
 						}
 					})	
 				}

@@ -32,36 +32,35 @@ def crear(request):
 @login_required
 def crear_horario(request):
 	if request.is_ajax() and request.POST:
+#####################################################################################################################################
 		dato = Clase.objects.get(id=request.POST['clase'])
 		clases = Clase.objects.filter(profesor_id=dato.profesor.id)
-		print 'Profesor:',dato.profesor.id
-		i = int()
 		for clase in clases:
-			i = i+1
-			print 'Vez:',i
 			horarios = Horario.objects.filter(clase_id=clase.id, dia_id=request.POST['dia'])
 			for hora in horarios:
-				print 'Horas Inicio:',request.POST['desde'], request.POST['hasta'],' - ', hora.inicio, hora.final
-				conflictoHoraInicio(request.POST['desde'], request.POST['hasta'], hora.inicio, hora.final)
-
-		return HttpResponse(status=200)
-		# if conflictoHora(request.POST['desde'], '2:00 pm') or conflictoHora('2:45 pm', equest.POST['hasta']):
-			# pass
-		# try:
-		# 	if Horario.objects.filter(clase_id=request.POST['clase']):
-		# 		return HttpResponse(json.dumps({'estado': 2}), content_type="application/json; charset=uft8") # Retorna que no es Aceptable
-		# 	else:
-		# 		raise ObjectDoesNotExist
-		# except ObjectDoesNotExist:
-		# 	try:
-		# 		horario = Horario(clase_id=request.POST['clase'], dia_id=request.POST['dia'], inicio=request.POST['desde'], final=request.POST['hasta'])
-		# 		horario.save()
-		# 		horario = Horario.objects.filter(clase_id=request.POST['clase'])
-		# 		for self in horario:
-		# 			set_bitacora(request, 'Horarios', 'Crear', 'Clase: "'+ str(self.clase) +'"'+', Dia: "'+ str(self.dia) +'"'+', Hora Desde: "'+ str(self.inicio) +'"'+', Hora Hasta: "'+ str(self.final) +'"')
-		# 		return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
-		# 	except Exception:
-		# 		return HttpResponse(json.dumps({'estado': 0}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+				if choqueHorario(request.POST['desde'], request.POST['hasta'], hora.inicio, hora.final):
+					choque = True
+		if 'choque' in locals():
+			print 'Conflicto'
+			return HttpResponse(json.dumps({'choque': 'true'}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+		else:
+			print 'Horario Aceptable'
+######################################################################################################################################		
+			try:
+				if Horario.objects.filter(clase_id=request.POST['clase']):
+					return HttpResponse(json.dumps({'estado': 2}), content_type="application/json; charset=uft8") # Retorna que no es Aceptable
+				else:
+					raise ObjectDoesNotExist
+			except ObjectDoesNotExist:
+				try:
+					horario = Horario(clase_id=request.POST['clase'], dia_id=request.POST['dia'], inicio=request.POST['desde'], final=request.POST['hasta'])
+					horario.save()
+					horario = Horario.objects.filter(clase_id=request.POST['clase'])
+					for self in horario:
+						set_bitacora(request, 'Horarios', 'Crear', 'Clase: "'+ str(self.clase) +'"'+', Dia: "'+ str(self.dia) +'"'+', Hora Desde: "'+ str(self.inicio) +'"'+', Hora Hasta: "'+ str(self.final) +'"')
+					return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+				except Exception:
+					return HttpResponse(json.dumps({'estado': 0}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
 	else:
 		raise Http404
 
@@ -102,8 +101,8 @@ def guardar_horario(request):
 	else:
 		raise Http404
 
-def conflictoHoraInicio(nuevoInicio, nuevoFinal, inicio, final):
-	if inicio < final:
-		print 'Conflicto'
+def choqueHorario(nuevoInicio, nuevoFinal, inicio, final):
+	if nuevoInicio >= final and nuevoFinal >= inicio or nuevoInicio <= final and nuevoFinal <= inicio:
+		return False
 	else:
-		print 'Todo BN'
+		return True

@@ -43,7 +43,6 @@ def buscar_visualizar_clase(request, id):
 		clase = Clase.objects.get(id=id)
 		try:
 			horario = Horario.objects.get(clase_id=id)
-			print horario
 		except Exception:
 			return render(request, template, locals())
 		max = Clase.objects.values('cupo_max').filter(id=id)

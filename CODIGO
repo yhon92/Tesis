@@ -8,3 +8,7 @@ time.strftime("%H:%M %p")
 
 time.strftime('09:30 pm') > time.strftime('09:02 pm')
 True
+
+2:00 a 3:00
+
+2:00 a 3:00

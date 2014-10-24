@@ -11,8 +11,8 @@ class Dia(models.Model):
 class Horario(models.Model):
 	clase = models.ForeignKey(Clase)
 	dia = models.ForeignKey(Dia)
-	hora_desde = models.CharField(max_length=10)
-	hora_hasta = models.CharField(max_length=10)
+	inicio = models.CharField(max_length=10)
+	final = models.CharField(max_length=10)
 
 	def __unicode__(self):
 		return self.clase.catedra.nombre +' '+ self.clase.nivel.nombre +' '+ self.clase.seccion.nombre +' -- '+ self.dia.nombre

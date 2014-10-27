@@ -69,24 +69,31 @@ def asignar_actividad(request):
 def asignar_catedra(request):
 	if request.is_ajax() and request.POST:
 		try:
-			if Clase_Catedra.objects.filter(alumno_id=request.POST['alumno'], horario_id=request.POST['horario']):
+			if Clase_Catedra.objects.filter(alumno_id=request.POST['alumno'], clase_id=request.POST['clase']):
 				return HttpResponse(json.dumps({'estado': 2}), content_type="application/json; charset=uft8") # Retorna que no es Aceptable
 			else:
 				raise ObjectDoesNotExist # Laza la exepcion de que no existe el obejeto
 		except ObjectDoesNotExist:
-			max = Clase.objects.values('cupo_max').filter(id=request.POST['clase'])
-			used = Clase_Catedra.objects.filter(horario__clase_id=request.POST['clase']).count()
-			disponible = int(max[0]['cupo_max']) - int(used)
+######################################################################################################################################		
+			clase = Clase.objects.get(id=request.POST['clase'])
+
+
+######################################################################################################################################		
+			# max = Clase.objects.values('cupo_max').filter(id=request.POST['clase'])
+			max = int(clase.cupo_max)
+			used = Clase_Catedra.objects.filter(clase_id=request.POST['clase']).count()
+			disponible = max - int(used)
 			if disponible > 0:
-				try:
-					catedra = Clase_Catedra(alumno_id=request.POST['alumno'], horario_id=request.POST['horario'])
-					catedra.save()
-					datos = Clase_Catedra.objects.filter(alumno_id=request.POST['alumno'], horario_id=request.POST['horario'])
-					for self in datos:
-						set_bitacora(request, 'Alumnos', 'Asignar', 'Alumno: '+ str(self.alumno) +' | Cátedra: "'+ str(self.horario.clase) +'"')
-					return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
-				except Exception:
-					return HttpResponse(json.dumps({'estado': 0}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+				return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+				# try:
+				# 	catedra = Clase_Catedra(alumno_id=request.POST['alumno'], clase_id=request.POST['clase'])
+				# 	catedra.save()
+				# 	datos = Clase_Catedra.objects.filter(alumno_id=request.POST['alumno'], clase_id=request.POST['clase'])
+				# 	for self in datos:
+				# 		set_bitacora(request, 'Alumnos', 'Asignar', 'Alumno: '+ str(self.alumno) +' | Cátedra: "'+ str(self.clase) +'"')
+				# 	return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+				# except Exception:
+				# 	return HttpResponse(json.dumps({'estado': 0}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
 			else:
 				return HttpResponse(json.dumps({'estado': 3}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
 	else:
@@ -179,19 +186,25 @@ def buscar_visualizar_alumno(request, id):
 @login_required
 def buscar_horario(request, id):
 	if request.is_ajax():
-		horarios = Horario.objects.get(id=id)
-		return HttpResponse(json.dumps({'clase': horarios.clase.id, 'id': horarios.id, 'dia': horarios.dia.nombre, 'desde': horarios.hora_desde, 'hasta': horarios.hora_hasta}), content_type="application/json; charset=uft8")
+		datos = Horario.objects.filter(clase_id=id)
+		horarios = list()
+		for dato in datos:
+			horarios.append({'dia': dato.dia.nombre, 'inicio': dato.inicio, 'final': dato.final})
+			# horarios.append({'clase': horarios.clase.id, 'id': horarios.id, 'dia': horarios.dia.nombre, 'inicio': horarios.inicio, 'final': horarios.final})
+		catedra = datos[0].clase.catedra.id
+		return HttpResponse(json.dumps({'horarios': horarios, 'catedra': catedra}), content_type="application/json; charset=uft8")
 	else:
 		raise Http404
 
 @login_required
 def catedra(request, id):
 	if request.is_ajax():
-		alumno = Clase_Catedra.objects.filter(alumno_id=id)
+		clases = Clase_Catedra.objects.filter(alumno_id=id)
 		ids = list()
-		for clase in alumno:
-			ids.append(str(clase.horario_id))
-		horarios = Horario.objects.exclude(id__in=ids)
+		for clase in clases:
+			ids.append(str(clase.clase.catedra.id))
+		print ids
+		clases = Clase.objects.exclude(catedra_id__in=ids).order_by('catedra', 'nivel', 'seccion')
 		template = 'asignar_catedra.html'
 		return render(request, template, locals())
 	else:

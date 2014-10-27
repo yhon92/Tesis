@@ -32,7 +32,7 @@ def crear(request):
 @login_required
 def crear_horario(request):
 	if request.is_ajax() and request.POST:
-#####################################################################################################################################
+######################################################################################################################################		
 		dato = Clase.objects.get(id=request.POST['clase'])
 		clases = Clase.objects.filter(profesor_id=dato.profesor.id)
 		for clase in clases:
@@ -61,6 +61,7 @@ def crear_horario(request):
 					return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
 				except Exception:
 					return HttpResponse(json.dumps({'estado': 0}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+		return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
 	else:
 		raise Http404
 
@@ -85,6 +86,7 @@ def guardar_horario(request):
 		horario = Horario.objects.filter(id=request.POST['id'])
 		for dato in horario:
 			if str(dato.dia.id) != request.POST['dia'] or str(dato.inicio) != request.POST['desde'] or str(dato.final) != request.POST['hasta']:
+######################################################################################################################################		
 				dato_p = Clase.objects.get(id=dato.clase.id)
 				clases = Clase.objects.filter(profesor_id=dato_p.profesor.id).exclude(id=dato.clase.id)
 				for clase in clases:
@@ -97,6 +99,7 @@ def guardar_horario(request):
 					return HttpResponse(json.dumps({'choque': 'true'}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
 				else:
 					print 'Horario Aceptable'
+######################################################################################################################################		
 					antes = 'Clase: '+'"'+ str(dato.clase) +'"'+', Dia: '+'"'+ str(dato.dia) +'"'+', De: '+'"'+ str(dato.inicio) +'"'+' a '+'"'+ str(dato.final) +'"'
 			else:
 				return HttpResponse(json.dumps({'estado': 3}), content_type="application/json; charset=uft8")
@@ -114,9 +117,26 @@ def guardar_horario(request):
 		raise Http404
 
 def choqueHorario(nuevoInicio, nuevoFinal, inicio, final):
-	
+	print nuevoInicio, nuevoFinal, inicio, final
+	nuevoInicio = convertirHora(nuevoInicio)
+	nuevoFinal = convertirHora(nuevoFinal)
+	inicio = convertirHora(inicio)
+	final = convertirHora(final)
 	print nuevoInicio, nuevoFinal, inicio, final
 	if nuevoInicio >= final and nuevoFinal >= inicio or nuevoInicio <= final and nuevoFinal <= inicio:
 		return False
 	else:
 		return True
+
+def convertirHora(hora):
+	hora = time.strptime(hora, '%I:%M %p')
+	print str(hora.tm_hour)+':'+str(hora.tm_min)
+	if hora.tm_hour < 10:
+		horas = '0'+str(hora.tm_hour)
+	else:
+		horas = str(hora.tm_hour)
+	if hora.tm_min < 10:
+		minutos = '0'+str(hora.tm_min)
+	else:
+		minutos = str(hora.tm_min)
+	return horas+':'+minutos

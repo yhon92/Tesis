@@ -2,7 +2,8 @@
 from django.db import models
 from django_extensions.db.fields import UUIDField
 from actividades.models import Actividad
-from horarios.models import Horario
+# from horarios.models import Horario
+from clases.models import Clase
 from instrumentos.models import Instrumento
 from profesores.models import Profesor
 
@@ -72,7 +73,7 @@ class Clase_Individual(models.Model):
 
 class Clase_Catedra(models.Model):
 	alumno = models.ForeignKey(Alumno)
-	horario = models.ForeignKey(Horario)
+	clase = models.ForeignKey(Clase)
 
 	def __unicode__(self):
-		return self.alumno.nombres +' '+ self.alumno.apellidos +' -- '+ self.horario.clase.catedra.nombre +' '+ self.horario.clase.nivel.nombre +' '+ self.horario.clase.seccion.nombre
+		return self.alumno.nombres +' '+ self.alumno.apellidos +' -- '+ self.clase.catedra.nombre +' '+ self.clase.nivel.nombre +' '+ self.clase.seccion.nombre

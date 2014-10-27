@@ -3,14 +3,14 @@
 		<div class="center-text">
 			<select id="" class="list large" name="lstClase" required>
 				<option value="">Seleccionar</option>
-			{% for horario in horarios %}
-				<option value="{{horario.id}}">{{horario.clase.catedra.nombre}} {{horario.clase.nivel.nombre}} {{horario.clase.seccion.nombre}}</option>
+			{% for clase in clases %}
+				<option value="{{clase.id}}">{{clase.catedra}} {{clase.nivel}} {{clase.seccion}}</option>
 			{% endfor %}
 			</select>
 		</div>
 		<fieldset class="transparente">
 			<legend>Horario</legend>
-			<label id="horario" class="label-mostrar"></label>
+			<div id="horarios"></div>
 		</fieldset>
 	</fieldset>
 	<div>
@@ -18,19 +18,20 @@
 	</div>
 </div>
 <script>
-	var $catedra = $('select[name=lstClase]'),
-			$horario = $('#horario')
+	var $clase = $('select[name=lstClase]'),
+			$horarios = $('#horarios')
 	
-	$catedra.on('change', buscarHorario)
+	$clase.on('change', buscarHorario)
 
 	$('#asignarCatedra').on('click', function(e) {
 		e.preventDefault()
-		if ($catedra.val() != "" && $horario.html() != "") {
+		if ($clase.val() != "") {
 			var datos = {
 				alumno: $('#hdnId').val(),
-				clase: $horario.attr('clase-id'),
-				horario: $horario.attr('data-id')
+				clase: $clase.val(),
+				catedra: $horarios.attr('data-catedra')
 			}
+			console.log(datos)
 			$.post('asignar-catedra/', datos, function(data, textStatus, xhr) {
 				if (data.estado == 0) {
 					alertify.error("¡Error al asignar catedra!")
@@ -48,12 +49,13 @@
 	})
 
 	function buscarHorario(e){
-		$horario.html("").attr('data-id', '');
-		if ($catedra.val()) {
-			$.get('buscar-horario/' + $catedra.val(), function(data) {
-				$horario.html(data.dia +' <span class="gris_oscuro">de</span> '+ data.desde +' <span class="gris_oscuro">a</span> '+ data.hasta)
-				$horario.attr('data-id', data.id)
-				$horario.attr('clase-id', data.clase)
+		$horarios.html("").attr('data-catedra', '')
+		if ($clase.val()) {
+			$.get('buscar-horario/' + $clase.val(), function(data) {
+				$.each(data.horarios, function(i, valor) {
+					$('<label class="label-mostrar block">').html(valor.dia +' <span class="gris_oscuro">de</span> '+ valor.inicio +' <span class="gris_oscuro">a</span> '+ valor.final).appendTo($horarios)
+				})
+				$horarios.attr('data-catedra', data.catedra)
 			})
 		}
 	}

@@ -2,7 +2,6 @@
 import os
 from datetime import datetime
 import logging
-
 from django.db import connection
 from django.conf import settings
 from django.http import HttpResponse

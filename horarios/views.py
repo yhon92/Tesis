@@ -3,7 +3,7 @@ import json
 import datetime, time
 from django.shortcuts import render, get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponse, JsonResponse, Http404
 from django.template import Context
 from django.template.context import RequestContext
 from django.template.loader import get_template
@@ -42,13 +42,13 @@ def crear_horario(request):
 					choque = True
 		if 'choque' in locals():
 			print 'Conflicto'
-			return HttpResponse(json.dumps({'choque': 'true'}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+			return JsonResponse({'choque': 'true'}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 		else:
 			print 'Horario Aceptable'
 ######################################################################################################################################		
 			try:
 				if Horario.objects.filter(clase_id=request.POST['clase']):
-					return HttpResponse(json.dumps({'estado': 2}), content_type="application/json; charset=uft8") # Retorna que no es Aceptable
+					return JsonResponse({'estado': 2}) # Retorna que no es Aceptable
 				else:
 					raise ObjectDoesNotExist
 			except ObjectDoesNotExist:
@@ -58,10 +58,10 @@ def crear_horario(request):
 					horario = Horario.objects.filter(clase_id=request.POST['clase'])
 					for self in horario:
 						set_bitacora(request, 'Horarios', 'Crear', 'Clase: "'+ str(self.clase) +'"'+', Dia: "'+ str(self.dia) +'"'+', Hora Desde: "'+ str(self.inicio) +'"'+', Hora Hasta: "'+ str(self.final) +'"')
-					return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+					return JsonResponse({'estado': 1}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 				except Exception:
-					return HttpResponse(json.dumps({'estado': 0}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
-		return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+					return JsonResponse({'estado': 0}) # Retorna que se ha creado un nuevo recurso de forma exitosa
+		return JsonResponse({'estado': 1}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 	else:
 		raise Http404
 
@@ -76,7 +76,7 @@ def editar(request):
 def buscar_horario(request, id):
 	if request.is_ajax():
 		horario = Horario.objects.get(id=id)
-		return HttpResponse(json.dumps({'dia': horario.dia_id, 'desde': horario.inicio, 'hasta': horario.final}), content_type="application/json; charset=uft8")
+		return JsonResponse({'dia': horario.dia_id, 'desde': horario.inicio, 'hasta': horario.final})
 	else:
 		raise Http404
 
@@ -96,33 +96,31 @@ def guardar_horario(request):
 							choque = True
 				if 'choque' in locals():
 					print 'Conflicto'
-					return HttpResponse(json.dumps({'choque': 'true'}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+					return JsonResponse({'choque': 'true'}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 				else:
 					print 'Horario Aceptable'
 ######################################################################################################################################		
 					antes = 'Clase: '+'"'+ str(dato.clase) +'"'+', Dia: '+'"'+ str(dato.dia) +'"'+', De: '+'"'+ str(dato.inicio) +'"'+' a '+'"'+ str(dato.final) +'"'
 			else:
-				return HttpResponse(json.dumps({'estado': 3}), content_type="application/json; charset=uft8")
+				return JsonResponse({'estado': 3})
 		if 'antes' in locals():
 			try:
 				horario.update(dia=request.POST['dia'], inicio=request.POST['desde'], final=request.POST['hasta'])
 			except Exception:
-				return HttpResponse(json.dumps({'estado': 0}), content_type="application/json; charset=uft8")
+				return JsonResponse({'estado': 0})
 			horario = Horario.objects.filter(id=request.POST['id'])
 			for dato in horario:
 				ahora = 'Clase: '+'"'+ str(dato.clase) +'"'+', Dia: '+'"'+ str(dato.dia) +'"'+', De: '+'"'+ str(dato.inicio) +'"'+' a '+'"'+ str(dato.final) +'"'
 			set_bitacora(request, 'Horarios', 'Editar', 'Antes['+ str(antes) +']'+' - Ahora['+ str(ahora) +']')
-			return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8")
+			return JsonResponse({'estado': 1})
 	else:
 		raise Http404
 
 def choqueHorario(nuevoInicio, nuevoFinal, inicio, final):
-	print nuevoInicio, nuevoFinal, inicio, final
 	nuevoInicio = convertirHora(nuevoInicio)
 	nuevoFinal = convertirHora(nuevoFinal)
 	inicio = convertirHora(inicio)
 	final = convertirHora(final)
-	print nuevoInicio, nuevoFinal, inicio, final
 	if nuevoInicio >= final and nuevoFinal >= inicio or nuevoInicio <= final and nuevoFinal <= inicio:
 		return False
 	else:
@@ -130,7 +128,6 @@ def choqueHorario(nuevoInicio, nuevoFinal, inicio, final):
 
 def convertirHora(hora):
 	hora = time.strptime(hora, '%I:%M %p')
-	print str(hora.tm_hour)+':'+str(hora.tm_min)
 	if hora.tm_hour < 10:
 		horas = '0'+str(hora.tm_hour)
 	else:

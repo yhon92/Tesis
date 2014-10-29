@@ -3,7 +3,7 @@ import json
 import datetime
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponse, JsonResponse, Http404
 from django.shortcuts import render
 from .models import Tipo_Actividad, Nivel_Actividad, Actividad
 from alumnos.models import Alumno_Actividad
@@ -28,7 +28,7 @@ def index(request):
 def buscar_actividad(request, id):
 	if request.is_ajax():
 		actividad = Actividad.objects.get(id=id)
-		return HttpResponse(json.dumps({'nombre': actividad.nombre, 'tipo': actividad.tipo_id, 'nivel': actividad.nivel_id}), content_type="application/json; charset=uft8")
+		return JsonResponse({'nombre': actividad.nombre, 'tipo': actividad.tipo_id, 'nivel': actividad.nivel_id})
 	else:
 		raise Http404
 
@@ -60,17 +60,17 @@ def guardar_actividad(request):
 			if str(dato.nombre) != request.POST['nombre'].title() or str(dato.nivel.id) != request.POST['nivel']:
 				antes = 'Nombre: '+'"'+ str(dato.nombre) +'"'+', Nivel: '+'"'+ str(dato.nivel) +'"'
 			else:
-				return HttpResponse(json.dumps({'estado': 3}), content_type="application/json; charset=uft8")
+				return JsonResponse({'estado': 3})
 		if 'antes' in locals():
 			try:
 				actividad.update(nombre=request.POST['nombre'].title(), nivel=request.POST['nivel'])
 			except Exception:
-				return HttpResponse(json.dumps({'estado': 0}), content_type="application/json; charset=uft8")
+				return JsonResponse({'estado': 0})
 			actividad = Actividad.objects.filter(id=request.POST['id'])	
 			for dato in actividad:
 				ahora = 'Nombre: '+'"'+ str(dato.nombre) +'"'+', Nivel: '+'"'+ str(dato.nivel) +'"'
 			set_bitacora(request, 'Actividades', 'Editar', 'Antes['+ str(antes) +']'+' - Ahora['+ str(ahora) +']')
-			return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8")
+			return JsonResponse({'estado': 1})
 	else:
 		raise Http404
 
@@ -89,7 +89,7 @@ def crear_actividad(request):
 	if request.is_ajax() and request.POST:
 		try:
 			if Actividad.objects.filter(nombre=request.POST['nombre'].title(), tipo_id=request.POST['tipo'], nivel_id=request.POST['nivel']):
-				return HttpResponse(json.dumps({'estado': 2}), content_type="application/json; charset=uft8") # Retorna que no es Aceptable
+				return JsonResponse({'estado': 2}) # Retorna que no es Aceptable
 			else:
 				raise ObjectDoesNotExist
 		except ObjectDoesNotExist:
@@ -97,11 +97,11 @@ def crear_actividad(request):
 				actividad = Actividad(nombre=request.POST['nombre'].title(), tipo_id=request.POST['tipo'], nivel_id=request.POST['nivel'])
 				actividad.save()
 			except Exception, e:
-				return HttpResponse(json.dumps({'estado': 0}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+				return JsonResponse({'estado': 0}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 			actividad = Actividad.objects.filter(nombre=request.POST['nombre'].title(), tipo_id=request.POST['tipo'], nivel_id=request.POST['nivel'])
 			for dato in actividad:
 				set_bitacora(request, 'Actividades', 'Crear', 'Nombre: "'+ request.POST['nombre'].title() +'"'+', Tipo: "'+ unicode(str(dato.tipo), 'utf-8') +'"'+', Nivel: "'+ unicode(str(dato.nivel), 'utf-8') +'"')
-			return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+			return JsonResponse({'estado': 1}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 	else:
 		raise Http404
 

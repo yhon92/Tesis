@@ -4,7 +4,7 @@ import datetime
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponse, JsonResponse, Http404
 from django.shortcuts import render
 from actividades.models import Tipo_Actividad, Actividad
 from alumnos.models import Alumno, Prenda, Alumno_Prenda, Alumno_Actividad, Nivel_I, Clase_Individual, Clase_Catedra
@@ -75,7 +75,7 @@ def buscar_visualizar_bitacora(request, tipo, usuario, modulo, accion, desde, ha
 	
 	if bitacoras != []:
 		if funcion == 'Comprobar':
-			return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8")
+			return JsonResponse({'estado': 1})
 		elif funcion == 'Imprimir':
 			if tipo == 'pdf':
 			
@@ -93,7 +93,7 @@ def buscar_visualizar_bitacora(request, tipo, usuario, modulo, accion, desde, ha
 				html = render_to_string('pdf_bitacora.html', locals(), context_instance=RequestContext(request))
 				return generar_pdf(html)
 	else:
-		return HttpResponse(json.dumps({'estado': 3}), content_type="application/json; charset=uft8")
+		return JsonResponse({'estado': 3})
 
 @login_required
 def mostrar_fecha(request, fecha, cedula, estado, sexo, desde, hasta, funcion):
@@ -113,7 +113,7 @@ def mostrar_fecha(request, fecha, cedula, estado, sexo, desde, hasta, funcion):
 
 	if alumnos != []:
 		if funcion == 'Comprobar':
-			return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8")
+			return JsonResponse({'estado': 1})
 		elif funcion == 'Imprimir':
 			num = 0
 			for alumno in alumnos:
@@ -133,7 +133,7 @@ def mostrar_fecha(request, fecha, cedula, estado, sexo, desde, hasta, funcion):
 			html = render_to_string('pdf_fecha.html', locals(), context_instance=RequestContext(request))
 			return generar_pdf(html)
 	else:
-		return HttpResponse(json.dumps({'estado': 3}), content_type="application/json; charset=uft8")
+		return JsonResponse({'estado': 3})
 
 
 @login_required
@@ -159,7 +159,7 @@ def mostrar_instrumento(request, instrumento, nivel, cedula, estado, sexo, funci
 	
 	if alumnos != []:
 		if funcion == 'Comprobar':
-			return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8")
+			return JsonResponse({'estado': 1})
 		elif funcion == 'Imprimir':
 			num = 0
 			for alumno in alumnos:
@@ -177,7 +177,7 @@ def mostrar_instrumento(request, instrumento, nivel, cedula, estado, sexo, funci
 			html = render_to_string('pdf_instrumento.html', locals(), context_instance=RequestContext(request))
 			return generar_pdf(html)
 	else:
-		return HttpResponse(json.dumps({'estado': 3}), content_type="application/json; charset=uft8")
+		return JsonResponse({'estado': 3})
 
 @login_required
 def mostrar_actividad(request, actividad, instrumento, cedula, estado, sexo, funcion):
@@ -198,7 +198,7 @@ def mostrar_actividad(request, actividad, instrumento, cedula, estado, sexo, fun
 
 	if alumnos != []:
 		if funcion == 'Comprobar':
-			return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8")
+			return JsonResponse({'estado': 1})
 		elif funcion == 'Imprimir':
 			num = 0
 			for alumno in alumnos:
@@ -226,7 +226,7 @@ def mostrar_actividad(request, actividad, instrumento, cedula, estado, sexo, fun
 			html = render_to_string('pdf_actividad.html', locals(), context_instance=RequestContext(request))
 			return generar_pdf(html)
 	else:
-		return HttpResponse(json.dumps({'estado': 3}), content_type="application/json; charset=uft8")
+		return JsonResponse({'estado': 3})
 
 @login_required
 def mostrar_catedra(request, catedra, nivel, seccion, cedula, estado, sexo, funcion):
@@ -251,7 +251,7 @@ def mostrar_catedra(request, catedra, nivel, seccion, cedula, estado, sexo, func
 	
 	if alumnos != []:
 		if funcion == 'Comprobar':
-			return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8")
+			return JsonResponse({'estado': 1})
 		elif funcion == 'Imprimir':
 			num = 0
 			for alumno in alumnos:
@@ -269,7 +269,7 @@ def mostrar_catedra(request, catedra, nivel, seccion, cedula, estado, sexo, func
 			html = render_to_string('pdf_catedra.html', locals(), context_instance=RequestContext(request))
 			return generar_pdf(html)
 	else:
-		return HttpResponse(json.dumps({'estado': 3}), content_type="application/json; charset=uft8")
+		return JsonResponse({'estado': 3})
 
 # @login_required
 # def mostrar_clase(request, clase, cedula, estado, sexo, funcion):
@@ -294,7 +294,7 @@ def mostrar_catedra(request, catedra, nivel, seccion, cedula, estado, sexo, func
 	
 # 	if alumnos != []:
 # 		if funcion == 'Comprobar':
-# 			return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8")
+# 			return JsonResponse({'estado': 1})
 # 		elif funcion == 'Imprimir':
 # 			num = 0
 # 			for alumno in alumnos:
@@ -313,7 +313,7 @@ def mostrar_catedra(request, catedra, nivel, seccion, cedula, estado, sexo, func
 # 			html = render_to_string('pdf_clase.html', locals(), context_instance=RequestContext(request))
 # 			return generar_pdf(html)
 # 	else:
-# 		return HttpResponse(json.dumps({'estado': 3}), content_type="application/json; charset=uft8")
+# 		return JsonResponse({'estado': 3})
 
 ##########################################################################################################
 def calcular_edad(fecha, hoy=None):
@@ -334,7 +334,7 @@ def cargar_combo(request):
 		
 		acciones = list(accion)
 		# print (acciones)
-		return HttpResponse(json.dumps({'acciones': acciones}), content_type="application/json; charset=uft8")
+		return JsonResponse({'acciones': acciones})
 	else:
 		raise Http404
 ##################################-Para PDF-##################################

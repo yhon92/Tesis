@@ -1,10 +1,10 @@
 # -- coding: utf-8 --
 import json
-import datetime
+import datetime, time
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponse, JsonResponse, Http404
 from django.shortcuts import render, get_object_or_404
 from django.template.context import RequestContext
 from .models import Alumno, Prenda, Alumno_Prenda, Alumno_Actividad, Nivel_I, Clase_Individual, Clase_Catedra
@@ -49,7 +49,7 @@ def asignar_actividad(request):
 	if request.is_ajax() and request.POST:
 		try:
 			if Alumno_Actividad.objects.filter(alumno_id=request.POST['alumno'], actividad_id=request.POST['actividad']):
-				return HttpResponse(json.dumps({'estado': 2}), content_type="application/json; charset=uft8") # Retorna que no es Aceptable
+				return JsonResponse({'estado': 2}) # Retorna que no es Aceptable
 			else:
 				raise ObjectDoesNotExist # Laza la exepcion de que no existe el obejeto
 		except ObjectDoesNotExist:
@@ -59,9 +59,9 @@ def asignar_actividad(request):
 				datos = Alumno_Actividad.objects.filter(alumno_id=request.POST['alumno'], actividad_id=request.POST['actividad'])
 				for self in datos:
 					set_bitacora(request, 'Alumnos', 'Asignar', 'Alumno: '+ str(self.alumno) +' | Actividad: "'+ str(self.actividad) +'"'+' Instrumento: "'+ str(self.instrumento) +'"'+' Clasificación: "'+ str(self.clasificacion) +'"')
-				return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+				return JsonResponse({'estado': 1}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 			except Exception:
-				return HttpResponse(json.dumps({'estado': 0}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+				return JsonResponse({'estado': 0}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 	else:
 		raise Http404
 
@@ -70,32 +70,48 @@ def asignar_catedra(request):
 	if request.is_ajax() and request.POST:
 		try:
 			if Clase_Catedra.objects.filter(alumno_id=request.POST['alumno'], clase_id=request.POST['clase']):
-				return HttpResponse(json.dumps({'estado': 2}), content_type="application/json; charset=uft8") # Retorna que no es Aceptable
+				return JsonResponse({'estado': 2}) # Retorna que no es Aceptable
+			elif Clase_Catedra.objects.filter(alumno_id=request.POST['alumno'], clase_id__catedra_id=request.POST['catedra']):
+				return JsonResponse({'estado': 2.1}) # Retorna que no es Aceptable
 			else:
 				raise ObjectDoesNotExist # Laza la exepcion de que no existe el obejeto
 		except ObjectDoesNotExist:
 ######################################################################################################################################		
-			clase = Clase.objects.get(id=request.POST['clase'])
-
-
-######################################################################################################################################		
-			# max = Clase.objects.values('cupo_max').filter(id=request.POST['clase'])
-			max = int(clase.cupo_max)
-			used = Clase_Catedra.objects.filter(clase_id=request.POST['clase']).count()
-			disponible = max - int(used)
-			if disponible > 0:
-				return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
-				# try:
-				# 	catedra = Clase_Catedra(alumno_id=request.POST['alumno'], clase_id=request.POST['clase'])
-				# 	catedra.save()
-				# 	datos = Clase_Catedra.objects.filter(alumno_id=request.POST['alumno'], clase_id=request.POST['clase'])
-				# 	for self in datos:
-				# 		set_bitacora(request, 'Alumnos', 'Asignar', 'Alumno: '+ str(self.alumno) +' | Cátedra: "'+ str(self.clase) +'"')
-				# 	return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
-				# except Exception:
-				# 	return HttpResponse(json.dumps({'estado': 0}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+			horarios = Horario.objects.filter(clase_id=request.POST['clase'])
+			for horario in horarios:
+				datos_clases = Clase_Catedra.objects.filter(alumno_id=request.POST['alumno'])
+				for dato_clase in datos_clases:
+					# print dato_clase.clase
+					clase = str(dato_clase.clase)
+					datos_horarios = Horario.objects.filter(clase_id=dato_clase.clase.id, dia_id=horario.dia.id)
+					for dato_horario in datos_horarios:
+						# print dato_horario.dia, dato_horario.inicio, dato_horario.final
+						if choqueHorario(horario.inicio, horario.final, dato_horario.inicio, dato_horario.final):
+							choque = True
+			if 'choque' in locals():
+				print 'Conflicto'
+				return JsonResponse({'choque': 'true', 'clase': clase}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 			else:
-				return HttpResponse(json.dumps({'estado': 3}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+				print 'Horario Aceptable'
+######################################################################################################################################		
+				clase = Clase.objects.get(id=request.POST['clase'])
+				# max = Clase.objects.values('cupo_max').filter(id=request.POST['clase'])
+				max = int(clase.cupo_max)
+				used = Clase_Catedra.objects.filter(clase_id=request.POST['clase']).count()
+				disponible = max - int(used)
+				if disponible > 0:
+					return JsonResponse({'estado': 1}) # Retorna que se ha creado un nuevo recurso de forma exitosa
+					# try:
+					# 	clase = Clase_Catedra(alumno_id=request.POST['alumno'], clase_id=request.POST['clase'])
+					# 	clase.save()
+					# 	datos = Clase_Catedra.objects.filter(alumno_id=request.POST['alumno'], clase_id=request.POST['clase'])
+					# 	for self in datos:
+					# 		set_bitacora(request, 'Alumnos', 'Asignar', 'Alumno: '+ str(self.alumno) +' | Cátedra: "'+ str(self.clase) +'"')
+					# 	return JsonResponse({'estado': 1}) # Retorna que se ha creado un nuevo recurso de forma exitosa
+					# except Exception:
+					# 	return JsonResponse({'estado': 0}) # Retorna que se ha creado un nuevo recurso de forma exitosa
+				else:
+					return JsonResponse({'estado': 3}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 	else:
 		raise Http404
 
@@ -104,7 +120,7 @@ def asignar_clase_individual(request):
 	if request.is_ajax() and request.POST:
 		try:
 			if Clase_Individual.objects.filter(alumno_id=request.POST['alumno'], instrumento_id=request.POST['instrumento']):
-				return HttpResponse(json.dumps({'estado': 2}), content_type="application/json; charset=uft8") # Retorna que no es Aceptable
+				return JsonResponse({'estado': 2}) # Retorna que no es Aceptable
 			else:
 				raise ObjectDoesNotExist # Laza la exepcion de que no existe el obejeto
 		except ObjectDoesNotExist:
@@ -114,9 +130,9 @@ def asignar_clase_individual(request):
 				datos = Clase_Individual.objects.filter(alumno_id=request.POST['alumno'], instrumento_id=request.POST['instrumento'])
 				for self in datos:
 					set_bitacora(request, 'Alumnos', 'Asignar', 'Alumno: '+ str(self.alumno) +' | Instrumento: "'+ str(self.instrumento) +'"'+' Profesor: "'+ str(self.profesor) +'"'+' Nivel: "'+ str(self.nivel) +'"')
-				return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+				return JsonResponse({'estado': 1}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 			except Exception:
-				return HttpResponse(json.dumps({'estado': 0}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+				return JsonResponse({'estado': 0}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 	else:
 		raise Http404
 
@@ -126,7 +142,7 @@ def asignar_talla(request):
 		try:
 			if Alumno_Prenda.objects.filter(alumno_id=request.POST['alumno'], prenda_id=request.POST['prenda']):
 				prenda = Prenda.objects.get(id=int(request.POST['prenda']))
-				return HttpResponse(json.dumps({'estado': 2, 'prenda': str(prenda)}), content_type="application/json; charset=uft8") # Retorna que no es Aceptable
+				return JsonResponse({'estado': 2, 'prenda': str(prenda)}) # Retorna que no es Aceptable
 			else:
 				raise ObjectDoesNotExist # Laza la exepcion de que no existe el obejeto
 		except ObjectDoesNotExist:
@@ -137,9 +153,9 @@ def asignar_talla(request):
 				for self in datos:
 					prenda = str(self.prenda)
 					set_bitacora(request, 'Alumnos', 'Asignar', 'Alumno: '+ str(self.alumno) +' | Prenda: "'+ str(self.prenda) +'"'+' Talla: "'+ str(self.talla) +'"'+' Otorgado: "'+ str(self.otorgado) +'"')
-				return HttpResponse(json.dumps({'estado': 1, 'prenda': prenda}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+				return JsonResponse({'estado': 1, 'prenda': prenda}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 			except Exception:
-				return HttpResponse(json.dumps({'estado': 0}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+				return JsonResponse({'estado': 0}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 	else:
 		raise Http404
 
@@ -147,7 +163,7 @@ def asignar_talla(request):
 def buscar_asignar_alumno(request, id):
 	if request.is_ajax():
 		alumno = Alumno.objects.get(id=id)
-		return HttpResponse(json.dumps({'id': id, 'nombres': alumno.nombres, 'apellidos': alumno.apellidos, 'cedula': alumno.cedula, 'sexo': alumno.sexo, 'fecha': str(alumno.fecha_nacimiento), 'activo': alumno.activo}), content_type="application/json; charset=uft8")
+		return JsonResponse({'id': id, 'nombres': alumno.nombres, 'apellidos': alumno.apellidos, 'cedula': alumno.cedula, 'sexo': alumno.sexo, 'fecha': str(alumno.fecha_nacimiento), 'activo': alumno.activo})
 	else:
 		raise Http404
 
@@ -192,7 +208,7 @@ def buscar_horario(request, id):
 			horarios.append({'dia': dato.dia.nombre, 'inicio': dato.inicio, 'final': dato.final})
 			# horarios.append({'clase': horarios.clase.id, 'id': horarios.id, 'dia': horarios.dia.nombre, 'inicio': horarios.inicio, 'final': horarios.final})
 		catedra = datos[0].clase.catedra.id
-		return HttpResponse(json.dumps({'horarios': horarios, 'catedra': catedra}), content_type="application/json; charset=uft8")
+		return JsonResponse({'horarios': horarios, 'catedra': catedra})
 	else:
 		raise Http404
 
@@ -204,7 +220,8 @@ def catedra(request, id):
 		for clase in clases:
 			ids.append(str(clase.clase.catedra.id))
 		print ids
-		clases = Clase.objects.exclude(catedra_id__in=ids).order_by('catedra', 'nivel', 'seccion')
+		clases = Clase.objects.exclude().order_by('catedra', 'nivel', 'seccion')
+		# clases = Clase.objects.exclude(catedra_id__in=ids).order_by('catedra', 'nivel', 'seccion')
 		template = 'asignar_catedra.html'
 		return render(request, template, locals())
 	else:
@@ -240,9 +257,9 @@ def guardar_actividad(request):
 					set_bitacora(request, 'Alumnos', 'Editar', 'Alumno: '+ alumno +' | Antes['+ str(antes) +']'+' - Ahora['+ str(ahora) +']')					
 					del antes
 		if cambio:
-			return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+			return JsonResponse({'estado': 1}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 		else:
-			return HttpResponse(json.dumps({'estado': 3}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+			return JsonResponse({'estado': 3}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 	else:
 		raise Http404
 
@@ -276,12 +293,12 @@ def guardar_clase(request):
 					del antes
 		if cambio:
 			if lleno:
-				return HttpResponse(json.dumps({'estado': 1, 'lleno': lleno}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
-			return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+				return JsonResponse({'estado': 1, 'lleno': lleno}) # Retorna que se ha creado un nuevo recurso de forma exitosa
+			return JsonResponse({'estado': 1}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 		else:
 			if lleno:
-				return HttpResponse(json.dumps({'estado': 3, 'lleno': lleno}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
-			return HttpResponse(json.dumps({'estado': 3}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+				return JsonResponse({'estado': 3, 'lleno': lleno}) # Retorna que se ha creado un nuevo recurso de forma exitosa
+			return JsonResponse({'estado': 3}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 	else:
 		raise Http404
 
@@ -301,7 +318,7 @@ def guardar_datos(request):
 			try:
 				alumno.update(menor=bool(int(request.POST['menor'])), cedula=request.POST['cedula'], nombres=request.POST['nombres'].title(), apellidos=request.POST['apellidos'].title(), fecha_nacimiento=request.POST['fecha_nacimiento'], fecha_actualizacion=datetime.date.today(), sexo=request.POST['sexo'], activo=bool(int(request.POST['activo'])))
 			except Exception:
-				return HttpResponse(json.dumps({'estado': 0}), content_type="application/json; charset=uft8")
+				return JsonResponse({'estado': 0})
 			cambio = True
 			alumno = Alumno.objects.filter(id=request.POST['id'])
 			for dato in alumno:
@@ -313,9 +330,9 @@ def guardar_datos(request):
 			set_bitacora(request, 'Alumnos', 'Editar', 'Antes['+ antes +']'+' - Ahora['+ ahora +']')
 			del antes
 		if cambio:
-			return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8")
+			return JsonResponse({'estado': 1})
 		else:
-			return HttpResponse(json.dumps({'estado': 3}), content_type="application/json; charset=uft8")
+			return JsonResponse({'estado': 3})
 	else:
 		raise Http404
 
@@ -341,9 +358,9 @@ def guardar_individual(request):
 					set_bitacora(request, 'Alumnos', 'Editar', 'Alumno: '+ alumno +' | Antes['+ str(antes) +']'+' - Ahora['+ str(ahora) +']')					
 					del antes
 		if cambio:
-			return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+			return JsonResponse({'estado': 1}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 		else:
-			return HttpResponse(json.dumps({'estado': 3}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+			return JsonResponse({'estado': 3}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 	else:
 		raise Http404
 
@@ -369,9 +386,9 @@ def guardar_prenda(request):
 					set_bitacora(request, 'Alumnos', 'Editar', 'Alumno: '+ alumno +' | Antes['+ str(antes) +']'+' - Ahora['+ str(ahora) +']')					
 					del antes
 		if cambio:
-			return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+			return JsonResponse({'estado': 1}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 		else:
-			return HttpResponse(json.dumps({'estado': 3}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+			return JsonResponse({'estado': 3}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 	else:
 		raise Http404
 
@@ -399,7 +416,7 @@ def rastrear_alumno(request):
 			alumnos = list()
 			for id, nombres, apellidos in alumno:
 				 alumnos.append({'id': id, 'nombres': nombres, 'apellidos': apellidos})
-			return HttpResponse(json.dumps({'alumnos': alumnos}), content_type="application/json; charset=uft8")
+			return JsonResponse({'alumnos': alumnos})
 	else:
 		raise Http404
 
@@ -417,7 +434,7 @@ def registrar_alumno(request):
 		if request.POST['menor'] == '0':
 			try:
 				if Alumno.objects.get(cedula=request.POST['cedula']):
-					return HttpResponse(json.dumps({'estado': 2}), content_type="application/json; charset=uft8") # Retorna que no es Aceptable
+					return JsonResponse({'estado': 2}) # Retorna que no es Aceptable
 				else:
 					raise ObjectDoesNotExist
 			except ObjectDoesNotExist:
@@ -425,13 +442,13 @@ def registrar_alumno(request):
 					alumno = Alumno(menor=bool(int(request.POST['menor'])), cedula=request.POST['cedula'], nombres=request.POST['nombres'].title(), apellidos=request.POST['apellidos'].title(), fecha_nacimiento=request.POST['fecha_nacimiento'], sexo=request.POST['sexo'], activo=True)
 					alumno.save()
 					set_bitacora(request, 'Alumnos', 'Registrar', 'Nombres: "'+ request.POST['nombres'].title() +'"'+', Apellidos: "'+ request.POST['apellidos'].title() +'"'+', Cedula: "'+ request.POST['cedula'] +'"'+', Menor: "'+ str(bool(int(request.POST['menor']))) +'"'+', Fecha Nacimiento: "'+ request.POST['fecha_nacimiento'] +'"'+', Sexo: "'+ request.POST['sexo'] +'"')
-					return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+					return JsonResponse({'estado': 1}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 				except Exception:
-					return HttpResponse(json.dumps({'estado': 0}), content_type="application/json; charset=uft8") # Retorna que se ha creado un nuevo recurso de forma exitosa
+					return JsonResponse({'estado': 0}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 		else:
 			try:
 				if Alumno.objects.filter(nombres=request.POST['nombres'].title(), apellidos=request.POST['apellidos'].title(), fecha_nacimiento=request.POST['fecha_nacimiento']):
-					return HttpResponse(json.dumps({'estado': 2}), content_type="application/json; charset=uft8") # Retorna que no es Aceptable
+					return JsonResponse({'estado': 2}) # Retorna que no es Aceptable
 				else:
 					raise ObjectDoesNotExist
 			except ObjectDoesNotExist:
@@ -439,9 +456,9 @@ def registrar_alumno(request):
 					alumno = Alumno(menor=bool(int(request.POST['menor'])), cedula=request.POST['cedula'], nombres=request.POST['nombres'].title(), apellidos=request.POST['apellidos'].title(), fecha_nacimiento=request.POST['fecha_nacimiento'], sexo=request.POST['sexo'], activo=True)
 					alumno.save()
 					set_bitacora(request, 'Alumnos', 'Registrar', 'Nombres: "'+ request.POST['nombres'].title() +'"'+', Apellidos: "'+ request.POST['apellidos'].title() +'"'+', Cedula: "'+ request.POST['cedula'] +'"'+', Menor: "'+ str(bool(int(request.POST['menor']))) +'"'+', Fecha Nacimiento: "'+ request.POST['fecha_nacimiento'] +'"'+', Sexo: "'+ request.POST['sexo'] +'"')
-					return HttpResponse(json.dumps({'estado': 1}), content_type="application/json; charset=uft8")
+					return JsonResponse({'estado': 1})
 				except Exception:
-					return HttpResponse(json.dumps({'estado': 0}), content_type="application/json; charset=uft8")
+					return JsonResponse({'estado': 0})
 	else:
 		raise Http404
 
@@ -465,3 +482,26 @@ def visualizar(request):
 		return render(request, template, locals())
 	else:
 		raise Http404
+
+##########################################################################################################################
+def choqueHorario(nuevoInicio, nuevoFinal, inicio, final):
+	nuevoInicio = convertirHora(nuevoInicio)
+	nuevoFinal = convertirHora(nuevoFinal)
+	inicio = convertirHora(inicio)
+	final = convertirHora(final)
+	if nuevoInicio >= final and nuevoFinal >= inicio or nuevoInicio <= final and nuevoFinal <= inicio:
+		return False
+	else:
+		return True
+
+def convertirHora(hora):
+	hora = time.strptime(hora, '%I:%M %p')
+	if hora.tm_hour < 10:
+		horas = '0'+str(hora.tm_hour)
+	else:
+		horas = str(hora.tm_hour)
+	if hora.tm_min < 10:
+		minutos = '0'+str(hora.tm_min)
+	else:
+		minutos = str(hora.tm_min)
+	return horas+':'+minutos

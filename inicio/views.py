@@ -1,7 +1,7 @@
 # -- coding: utf-8 --
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.template import Context
 from django.template.context import RequestContext

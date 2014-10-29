@@ -33,14 +33,20 @@
 			}
 			console.log(datos)
 			$.post('asignar-catedra/', datos, function(data, textStatus, xhr) {
-				if (data.estado == 0) {
-					alertify.error("¡Error al asignar catedra!")
-				}else if (data.estado == 1){
-					alertify.success("¡Cátedra Asignada!")
-				}else if (data.estado == 2){
-					alertify.error("¡Catedra ya asignada!")
-				}else if (data.estado == 3){
-					alertify.log("¡No hay cupo!")
+				if (data.choque) {
+					alertify.log('¡Choque de Horarios!' +'<br>'+ 'Con: '+ data.clase)
+				}else{
+					if (data.estado == 0) {
+						alertify.error("¡Error al asignar catedra!")
+					}else if (data.estado == 1){
+						alertify.success("¡Clase Asignada!")
+					}else if (data.estado == 2){
+						alertify.error("¡Clase ya asignada!")
+					}else if (data.estado == 2.1){
+						alertify.error("¡Catedra ya asignada!")
+					}else if (data.estado == 3){
+						alertify.log("¡No hay cupo!")
+					}
 				}
 			})
 		}else {

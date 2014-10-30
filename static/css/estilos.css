@@ -742,7 +742,8 @@ fieldset .transparente {
   margin: 0.1em;
   padding: 0.2em;
 }
-fieldset .transparente legend {
+fieldset .transparente legend,
+fieldset .transparente .verde_oscuro {
   color: #005e01;
 }
 fieldset .transparente .padding {
@@ -1074,6 +1075,9 @@ legend {
   box-shadow: 0 0 2px #00b7ff;
   font-family: "QuickSand-Regular";
   font-size: 1em;
+}
+.verde_oscuro {
+  color: #005e01;
 }
 /* Maquetacion del sistema no OOCSS */
 .contenedor-datos {

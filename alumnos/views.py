@@ -100,16 +100,15 @@ def asignar_catedra(request):
 				used = Clase_Catedra.objects.filter(clase_id=request.POST['clase']).count()
 				disponible = max - int(used)
 				if disponible > 0:
-					return JsonResponse({'estado': 1}) # Retorna que se ha creado un nuevo recurso de forma exitosa
-					# try:
-					# 	clase = Clase_Catedra(alumno_id=request.POST['alumno'], clase_id=request.POST['clase'])
-					# 	clase.save()
-					# 	datos = Clase_Catedra.objects.filter(alumno_id=request.POST['alumno'], clase_id=request.POST['clase'])
-					# 	for self in datos:
-					# 		set_bitacora(request, 'Alumnos', 'Asignar', 'Alumno: '+ str(self.alumno) +' | Cátedra: "'+ str(self.clase) +'"')
-					# 	return JsonResponse({'estado': 1}) # Retorna que se ha creado un nuevo recurso de forma exitosa
-					# except Exception:
-					# 	return JsonResponse({'estado': 0}) # Retorna que se ha creado un nuevo recurso de forma exitosa
+					try:
+						clase = Clase_Catedra(alumno_id=request.POST['alumno'], clase_id=request.POST['clase'])
+						clase.save()
+						datos = Clase_Catedra.objects.filter(alumno_id=request.POST['alumno'], clase_id=request.POST['clase'])
+						for self in datos:
+							set_bitacora(request, 'Alumnos', 'Asignar', 'Alumno: '+ str(self.alumno) +' | Cátedra: "'+ str(self.clase) +'"')
+						return JsonResponse({'estado': 1}) # Retorna que se ha creado un nuevo recurso de forma exitosa
+					except Exception:
+						return JsonResponse({'estado': 0}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 				else:
 					return JsonResponse({'estado': 3}) # Retorna que se ha creado un nuevo recurso de forma exitosa
 	else:
@@ -179,8 +178,18 @@ def buscar_editar_alumno(request, id):
 		actividades = Actividad.objects.all().order_by('nombre')
 		actividades_alumno = Alumno_Actividad.objects.filter(alumno_id=id)
 		instrumentos_actividad = Instrumento.objects.filter(instrumento__nombre='Voz').order_by('id')
-		horarios = Horario.objects.all().order_by('clase__catedra', 'clase__nivel__id', 'clase__seccion__id')
-		clases_alumno = Clase_Catedra.objects.filter(alumno_id=id)
+		clases = Clase.objects.all().order_by('catedra__id', 'nivel__id', 'seccion__id')
+		datos_cl = Clase_Catedra.objects.filter(alumno_id=id).order_by('clase_id__catedra_id')
+		clases_alumno = list()
+		for dato_cl in datos_cl:
+			horarios = list()
+			datos_h = Horario.objects.filter(clase_id=dato_cl.clase.id)
+			for dato_h in datos_h:
+				horarios.append({'dia': str(dato_h.dia), 'inicio': str(dato_h.inicio), 'final': str(dato_h.final)})
+			clases_alumno.append({'id':dato_cl.clase.id, 'clase': str(dato_cl.clase), 'horarios': horarios})
+
+		# horarios = Horario.objects.all().order_by('clase__catedra', 'clase__nivel__id', 'clase__seccion__id')
+
 		template = 'editar_alumno.html'
 		return render(request, template, locals())
 	else:
@@ -193,7 +202,15 @@ def buscar_visualizar_alumno(request, id):
 		prendas = Alumno_Prenda.objects.filter(alumno_id=id)
 		instrumentos = Clase_Individual.objects.filter(alumno_id=id)
 		actividades = Alumno_Actividad.objects.filter(alumno_id=id)
-		clases = Clase_Catedra.objects.filter(alumno_id=id)
+		datos_cl = Clase_Catedra.objects.filter(alumno_id=id).order_by('clase_id__catedra_id')
+		clases = list()
+		for dato_cl in datos_cl:
+			horarios = list()
+			clase = str(dato_cl.clase)
+			datos_h = Horario.objects.filter(clase_id=dato_cl.clase.id)
+			for dato_h in datos_h:
+				horarios.append({'dia': str(dato_h.dia), 'inicio': str(dato_h.inicio), 'final': str(dato_h.final)})
+			clases.append({'clase': clase, 'horarios': horarios})
 		template = 'visualizar_alumno.html'
 		return render(request, template, locals())
 	else:

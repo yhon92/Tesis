@@ -117,22 +117,38 @@
 			<fieldset class="block">
 				<legend>Clases</legend>
 			{% if clases %}
-				<fieldset class="transparente center-text">
+				<table>
+					<tr>
+						<th class="verde_oscuro center-text">Clase</th>
+						<th class="verde_oscuro center-text">Horarios</th>
+					</tr>
+				{% for alumno in clases %}
+					<tr>
+						<td align="top"><label class="label-mostrar">{{alumno.clase}}</label></td>
+						<td>
+						{% for horario in alumno.horarios %}
+							<label class="label-mostrar block">{{horario.dia}} <span class="gris_oscuro"> de </span>{{horario.inicio}}<span class="gris_oscuro"> a </span>{{horario.final}}</label>
+						{% endfor %}
+						</td>
+					</tr>
+				{% endfor %}
+				</table>
+				<!--<fieldset class="transparente center-text">
 					<legend>Clase</legend>
 				{% for alumno in clases %}
 					<div>
-						<label class="label-mostrar">{{alumno.horario.clase}}</label>
+						<label class="label-mostrar">{{alumno.clase}}</label>
 					</div>
 				{% endfor %}
 				</fieldset>
 				<fieldset class="transparente center-text">
 					<legend>Horario</legend>
-				{% for alumno in clases %}
+				{% for alumno in horario %}
 					<div>
-						<label class="label-mostrar">{{alumno.horario.dia}} <span class="gris_oscuro"> de </span> {{alumno.horario.hora_desde}} <span class="gris_oscuro"> a </span> {{alumno.horario.hora_hasta}}</label>
+						<label class="label-mostrar">{{alumno.dia}} <span class="gris_oscuro"> de </span> {{alumno.inicio}} <span class="gris_oscuro"> a </span> {{alumno.final}}</label>
 					</div>
 				{% endfor %}
-				</fieldset>
+				</fieldset>-->
 			{% else %}
 				<p class="center-text">No se ha sido asignado a ninguna clase</p>
 			{% endif %}

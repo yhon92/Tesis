@@ -162,8 +162,8 @@
 				{% for alumno in clases_alumno %}
 					<div>
 						<select id="{{alumno.id}}" class="list large" name="lstCatedra" data-id="{{alumno.horario.id}}" required>
-						{% for horario in horarios %}
-							<option value="{{horario.id}}" {% if alumno.horario.id == horario.id %} selected {% endif%} >{{horario.clase.catedra.nombre}} {{horario.clase.nivel.nombre}} {{horario.clase.seccion.nombre}}</option>
+						{% for clase in clases %}
+							<option value="{{clase.id}}" {% if alumno.id == clase.id %} selected {% endif%} >{{clase}}</option>
 						{% endfor %}
 						</select>
 					</div>

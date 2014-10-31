@@ -1,5 +1,6 @@
 <div id="catedra">
 	<fieldset class="center-text">
+{% if clases %}
 		<div class="center-text">
 			<select id="" class="list large" name="lstClase" required>
 				<option value="">Seleccionar</option>
@@ -16,6 +17,10 @@
 	<div>
 		<button class="boton-on" id="asignarCatedra">Asignar</button>
 	</div>
+{% else %}
+		<p>No hay clase para asignar</p>	
+	</fieldset>
+{% endif %}
 </div>
 <script>
 	var $clase = $('select[name=lstClase]'),

@@ -42,7 +42,8 @@ def buscar_visualizar_clase(request, id):
 			alumno.edad = calcular_edad(alumno.alumno.fecha_nacimiento)
 		clase = Clase.objects.get(id=id)
 		try:
-			horario = Horario.objects.filter(clase_id=id)
+			horarios = Horario.objects.filter(clase_id=id)
+			print
 		except Exception:
 			return render(request, template, locals())
 		max = Clase.objects.values('cupo_max').filter(id=id)
@@ -151,8 +152,8 @@ def visualizar(request):
 def visualizar_pdf(request, id):
 	try:
 		clase = Clase.objects.get(id=id)
-		horario = Horario.objects.get(clase_id=id)
-		alumnos = Clase_Catedra.objects.filter(horario__clase_id=id)
+		horario = Horario.objects.filter(clase_id=id)
+		alumnos = Clase_Catedra.objects.filter(clase_id=id)
 		num = 0
 		for alumno in alumnos:
 			num = num + 1

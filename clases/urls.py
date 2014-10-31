@@ -10,6 +10,6 @@ urlpatterns = patterns('clases.views',
 	url(r'^guardar-clase/$', 'guardar_clase', name='guardar_clase'),
 	url(r'^visualizar/$', 'visualizar', name='visualizar'),
 	url(r'^visualizar/pdf/(?P<id>[\w-]+)$', 'visualizar_pdf', name='visualizar_pdf'),
-	url(r'^visualizar/pdf/(?P<id>[\w-]+)$', 'visualizar_pdf', name='visualizar_pdf'),
+	# url(r'^visualizar/pdf/(?P<id>[\w-]+)$', 'visualizar_pdf', name='visualizar_pdf'),
 	# url(r'^designar/$', 'designar', name='designar'),
 )

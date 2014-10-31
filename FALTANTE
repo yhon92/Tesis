@@ -1,8 +1,7 @@
 FALTANTE
 
-VALIDAR EL CHOQUE DE LOS HORARIOS DE LOS PROFESORES Y LOS ALUMNOS
-VALIDAR QUE NO SE INSCRIBAN ni EDITEN LOS ALUMNOS A UNA MISMA CATEDRA CON DIFERENTES AÑOS O SECCIONES  ?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿
 
+VALIDAR EL CHOQUE DE LOS HORARIOS DE LOS PROFESORES Y LOS ALUMNOS
 
 
 mostrar el ESTADO de los alumnos en los reportes
@@ -14,12 +13,14 @@ ordenar alfabeticamente como se muestran las actividades
 Imprimir Alumno(Si da tiempo (Y) )
 Constancia de estudio
 
+
 Revisar que esten todas las Bitacoras
 ENCABEZADOS E INFORMACION EN LOS REPORTES
 
 
 REVISAR LAS VALIDADCIONES en los editar
 Revisar las asignaciones
+
 
 0 = error
 1 = todo bn

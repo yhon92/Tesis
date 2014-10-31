@@ -230,7 +230,7 @@ def mostrar_actividad(request, actividad, instrumento, cedula, estado, sexo, fun
 
 @login_required
 def mostrar_catedra(request, catedra, nivel, seccion, cedula, estado, sexo, funcion):
-	sql = 'SELECT CONCAT(a.nombres ," ", a.apellidos) AS nombre, a.cedula, a.fecha_nacimiento AS fecha, a.sexo, a.activo AS estado, n.nombre AS nivel FROM alumnos_alumno a, alumnos_clase_catedra acc, clases_clase cl, clases_nivel n, clases_catedra c, horarios_horario h, clases_seccion s WHERE a.id = acc.alumno_id AND acc.horario_id = h.id AND h.clase_id = cl.id AND cl.nivel_id = n.id AND cl.catedra_id = c.id AND cl.seccion_id = s.id AND c.id = "' + catedra + '"'
+	sql = 'SELECT CONCAT(a.nombres ," ", a.apellidos) AS nombre, a.cedula, a.fecha_nacimiento AS fecha, a.sexo, a.activo AS estado, n.nombre AS nivel FROM alumnos_alumno a, alumnos_clase_catedra acc, clases_clase cl, clases_nivel n, clases_catedra c, clases_seccion s WHERE a.id = acc.alumno_id AND acc.clase_id = cl.id AND cl.nivel_id = n.id AND cl.catedra_id = c.id AND cl.seccion_id = s.id AND c.id = "' + catedra + '"'
 	catedra = Catedra.objects.get(id=catedra)
 	if nivel != 'todos':
 		sql = sql + ' AND n.id = ' + '"'+ nivel +'"'

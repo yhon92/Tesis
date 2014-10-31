@@ -7,7 +7,7 @@
 				<select id="" class="list large" name="lstClase" required>
 					<option value="">Seleccionar</option>
 				{% for horario in horarios %}
-					<option value="{{horario.id}}">{{horario.clase.catedra.nombre}} {{horario.clase.nivel.nombre}} {{horario.clase.seccion.nombre}}</option>
+					<option value="{{horario.id}}">{{horario.clase}} {{horario.dia}}</option>
 				{% endfor %}
 				</select>
 			</div>

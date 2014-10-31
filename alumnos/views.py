@@ -81,11 +81,11 @@ def asignar_catedra(request):
 			for horario in horarios:
 				datos_clases = Clase_Catedra.objects.filter(alumno_id=request.POST['alumno'])
 				for dato_clase in datos_clases:
-					clase = str(dato_clase.clase)
 					datos_horarios = Horario.objects.filter(clase_id=dato_clase.clase.id, dia_id=horario.dia.id)
 					for dato_horario in datos_horarios:
 						if choqueHorario(horario.inicio, horario.final, dato_horario.inicio, dato_horario.final):
 							choque = True
+							clase = str(dato_clase.clase)
 			if 'choque' in locals():
 				print 'Conflicto'
 				return JsonResponse({'choque': 'true', 'clase': clase}) # Retorna que se ha creado un nuevo recurso de forma exitosa
@@ -292,7 +292,7 @@ def guardar_clase(request):
 						for dato_horario in datos_horarios:
 							if choqueHorario(horario.inicio, horario.final, dato_horario.inicio, dato_horario.final):
 								choque = True
-						choque_clase = str(dato_clase.clase)
+								choque_clase = str(dato_clase.clase)
 				if 'choque' in locals():
 					print 'Conflicto'
 					return JsonResponse({'choque': 'true', 'clase': choque_clase})
@@ -311,7 +311,6 @@ def guardar_clase(request):
 						cambio = True
 						clase = Clase_Catedra.objects.filter(id=request.POST['id'], alumno_id=request.POST['alumno'])			
 						for self in clase:
-							print 'ok antes'
 							alumno = str(self.alumno)
 							ahora = 'Clase: '+'"'+ str(self.clase) +'"'
 						set_bitacora(request, 'Alumnos', 'Editar', 'Alumno: '+ alumno +' | Antes['+ str(antes) +']'+' - Ahora['+ str(ahora) +']')					

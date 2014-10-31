@@ -7,7 +7,7 @@
 				<option value="">Seleccionar</option>
 			{% if clases %}
 				{% for clase in clases %}
-					<option value="{{clase.id}}">{{clase.catedra.nombre}} {{clase.nivel.nombre}} {{clase.seccion.nombre}}</option>
+					<option value="{{clase.id}}">{{clase}}</option>
 				{% endfor %}
 			{% endif %}
 			</select>

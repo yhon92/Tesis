@@ -261,7 +261,7 @@ th {
   transition: all 0.3s ease-out;
 }
 .icon-pencil:hover {
-  color: #0f3;
+  color: #f00;
   -webkit-transition: all 0.3s ease-out;
   -moz-transition: all 0.3s ease-out;
   -o-transition: all 0.3s ease-out;
@@ -280,7 +280,7 @@ th {
   transition: all 0.3s ease-out;
 }
 .icon-file:hover {
-  color: #0f3;
+  color: #f00;
   -webkit-transition: all 0.3s ease-out;
   -moz-transition: all 0.3s ease-out;
   -o-transition: all 0.3s ease-out;
@@ -299,7 +299,7 @@ th {
   transition: all 0.3s ease-out;
 }
 .icon-download:hover {
-  color: #0f3;
+  color: #f00;
   -webkit-transition: all 0.3s ease-out;
   -moz-transition: all 0.3s ease-out;
   -o-transition: all 0.3s ease-out;
@@ -318,7 +318,7 @@ th {
   transition: all 0.3s ease-out;
 }
 .icon-upload:hover {
-  color: #0f3;
+  color: #f00;
   -webkit-transition: all 0.3s ease-out;
   -moz-transition: all 0.3s ease-out;
   -o-transition: all 0.3s ease-out;
@@ -337,7 +337,7 @@ th {
   transition: all 0.3s ease-out;
 }
 .icon-remove:hover {
-  color: #0f3;
+  color: #f00;
   -webkit-transition: all 0.3s ease-out;
   -moz-transition: all 0.3s ease-out;
   -o-transition: all 0.3s ease-out;
@@ -356,7 +356,7 @@ th {
   transition: all 0.3s ease-out;
 }
 .icon-eye:hover {
-  color: #0f3;
+  color: #f00;
   -webkit-transition: all 0.3s ease-out;
   -moz-transition: all 0.3s ease-out;
   -o-transition: all 0.3s ease-out;
@@ -375,7 +375,7 @@ th {
   transition: all 0.3s ease-out;
 }
 .icon-file-pdf:hover {
-  color: #0f3;
+  color: #f00;
   -webkit-transition: all 0.3s ease-out;
   -moz-transition: all 0.3s ease-out;
   -o-transition: all 0.3s ease-out;
@@ -1091,6 +1091,9 @@ legend {
 }
 .form select[disabled] {
   background: #ececec;
+}
+.inline {
+  display: inline !important;
 }
 .inline-block {
   display: inline-block !important;

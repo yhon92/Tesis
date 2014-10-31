@@ -55,7 +55,7 @@
 	})
 
 	function buscarHorario(e){
-		$horarios.html("").attr('data-catedra', '')
+		$horarios.html('').attr('data-catedra', '')
 		if ($clase.val()) {
 			$.get('buscar-horario/' + $clase.val(), function(data) {
 				$.each(data.horarios, function(i, valor) {

@@ -81,11 +81,9 @@ def asignar_catedra(request):
 			for horario in horarios:
 				datos_clases = Clase_Catedra.objects.filter(alumno_id=request.POST['alumno'])
 				for dato_clase in datos_clases:
-					# print dato_clase.clase
 					clase = str(dato_clase.clase)
 					datos_horarios = Horario.objects.filter(clase_id=dato_clase.clase.id, dia_id=horario.dia.id)
 					for dato_horario in datos_horarios:
-						# print dato_horario.dia, dato_horario.inicio, dato_horario.final
 						if choqueHorario(horario.inicio, horario.final, dato_horario.inicio, dato_horario.final):
 							choque = True
 			if 'choque' in locals():
@@ -186,7 +184,7 @@ def buscar_editar_alumno(request, id):
 			datos_h = Horario.objects.filter(clase_id=dato_cl.clase.id)
 			for dato_h in datos_h:
 				horarios.append({'dia': str(dato_h.dia), 'inicio': str(dato_h.inicio), 'final': str(dato_h.final)})
-			clases_alumno.append({'id':dato_cl.clase.id, 'clase': str(dato_cl.clase), 'horarios': horarios})
+			clases_alumno.append({'id': dato_cl.id, 'clase_id':dato_cl.clase.id, 'catedra': dato_cl.clase.catedra.id, 'clase': str(dato_cl.clase), 'horarios': horarios})
 
 		# horarios = Horario.objects.all().order_by('clase__catedra', 'clase__nivel__id', 'clase__seccion__id')
 
@@ -223,9 +221,9 @@ def buscar_horario(request, id):
 		horarios = list()
 		for dato in datos:
 			horarios.append({'dia': dato.dia.nombre, 'inicio': dato.inicio, 'final': dato.final})
-			# horarios.append({'clase': horarios.clase.id, 'id': horarios.id, 'dia': horarios.dia.nombre, 'inicio': horarios.inicio, 'final': horarios.final})
 		catedra = datos[0].clase.catedra.id
-		return JsonResponse({'horarios': horarios, 'catedra': catedra})
+		clase = datos[0].clase.id
+		return JsonResponse({'horarios': horarios, 'catedra': catedra, 'clase': clase})
 	else:
 		raise Http404
 
@@ -236,9 +234,8 @@ def catedra(request, id):
 		ids = list()
 		for clase in clases:
 			ids.append(str(clase.clase.catedra.id))
-		print ids
-		clases = Clase.objects.exclude().order_by('catedra', 'nivel', 'seccion')
-		# clases = Clase.objects.exclude(catedra_id__in=ids).order_by('catedra', 'nivel', 'seccion')
+		# clases = Clase.objects.exclude().order_by('catedra', 'nivel', 'seccion')
+		clases = Clase.objects.exclude(catedra_id__in=ids).order_by('catedra', 'nivel', 'seccion')
 		template = 'asignar_catedra.html'
 		return render(request, template, locals())
 	else:
@@ -283,39 +280,45 @@ def guardar_actividad(request):
 @login_required
 def guardar_clase(request):
 	if request.is_ajax() and request.POST:
-		data = json.loads(request.body)
 		cambio = bool()
-		lleno = list()
-		for item in data['items']:
-			for dato in item:
-				clase = Clase_Catedra.objects.filter(id=dato['id'], alumno_id=dato['alumno'])
-				for self in clase:
-					if str(self.horario.id) != str(dato['horario']):
-						max = Clase.objects.filter(id=dato['clase'])
-						used = Clase_Catedra.objects.filter(horario__clase_id=dato['clase']).count()
-						disponible = int(max[0].cupo_max) - int(used)
-						if disponible > 0:
-							antes = 'Clase: '+'"'+ str(self.horario.clase) +'"'
-						else:
-							lleno.append({'clase': str(max[0].catedra) +' '+ str(max[0].nivel) +' '+ str(max[0].seccion)})
-				if 'antes' in locals():
-					clase.update(horario=dato['horario'])
-					Alumno.objects.filter(id=dato['alumno']).update(fecha_actualizacion=datetime.date.today())
-					cambio = True
-					clase = Clase_Catedra.objects.filter(id=dato['id'], alumno_id=dato['alumno'])			
-					for self in clase:
-						alumno = str(self.alumno)
-						ahora = 'Clase: '+'"'+ str(self.horario.clase) +'"'
-					set_bitacora(request, 'Alumnos', 'Editar', 'Alumno: '+ alumno +' | Antes['+ str(antes) +']'+' - Ahora['+ str(ahora) +']')					
-					del antes
-		if cambio:
-			if lleno:
-				return JsonResponse({'estado': 1, 'lleno': lleno}) # Retorna que se ha creado un nuevo recurso de forma exitosa
-			return JsonResponse({'estado': 1}) # Retorna que se ha creado un nuevo recurso de forma exitosa
-		else:
-			if lleno:
-				return JsonResponse({'estado': 3, 'lleno': lleno}) # Retorna que se ha creado un nuevo recurso de forma exitosa
-			return JsonResponse({'estado': 3}) # Retorna que se ha creado un nuevo recurso de forma exitosa
+		clase = Clase_Catedra.objects.filter(id=request.POST['id'], alumno_id=request.POST['alumno'])
+		for self in clase:
+			if str(self.clase.id) != str(request.POST['clase']):
+				horarios = Horario.objects.filter(clase_id=request.POST['clase'])
+				for horario in horarios:
+					datos_clases = Clase_Catedra.objects.filter(alumno_id=request.POST['alumno']).exclude(clase_id=self.clase.id)
+					for dato_clase in datos_clases:
+						datos_horarios = Horario.objects.filter(clase_id=dato_clase.clase.id, dia_id=horario.dia.id)
+						for dato_horario in datos_horarios:
+							if choqueHorario(horario.inicio, horario.final, dato_horario.inicio, dato_horario.final):
+								choque = True
+						choque_clase = str(dato_clase.clase)
+				if 'choque' in locals():
+					print 'Conflicto'
+					return JsonResponse({'choque': 'true', 'clase': choque_clase})
+				else:
+					print 'Horario Aceptable'
+					max = Clase.objects.get(id=request.POST['clase'])
+					used = Clase_Catedra.objects.filter(clase_id=request.POST['clase']).count()
+					disponible = int(max.cupo_max) - int(used)
+					if disponible > 0:
+						antes = 'Clase: '+'"'+ str(self.clase) +'"'
+					else:
+						return JsonResponse({'lleno': lleno})
+					if 'antes' in locals():
+						clase.update(clase=request.POST['clase'])
+						Alumno.objects.filter(id=request.POST['alumno']).update(fecha_actualizacion=datetime.date.today())
+						cambio = True
+						clase = Clase_Catedra.objects.filter(id=request.POST['id'], alumno_id=request.POST['alumno'])			
+						for self in clase:
+							print 'ok antes'
+							alumno = str(self.alumno)
+							ahora = 'Clase: '+'"'+ str(self.clase) +'"'
+						set_bitacora(request, 'Alumnos', 'Editar', 'Alumno: '+ alumno +' | Antes['+ str(antes) +']'+' - Ahora['+ str(ahora) +']')					
+						del antes
+						return JsonResponse({'estado': 1})
+			else:
+				return JsonResponse({'estado': 3})
 	else:
 		raise Http404
 
@@ -522,3 +525,4 @@ def convertirHora(hora):
 	else:
 		minutos = str(hora.tm_min)
 	return horas+':'+minutos
+			# horarios.append({'clase': horarios.clase.id, 'id': horarios.id, 'dia': horarios.dia.nombre, 'inicio': horarios.inicio, 'final': horarios.final})

@@ -117,14 +117,14 @@
 			<fieldset class="block">
 				<legend>Clases</legend>
 			{% if clases %}
-				<table>
+				<table border="1">
 					<tr>
 						<th class="verde_oscuro center-text">Clase</th>
 						<th class="verde_oscuro center-text">Horarios</th>
 					</tr>
 				{% for alumno in clases %}
 					<tr>
-						<td align="top"><label class="label-mostrar">{{alumno.clase}}</label></td>
+						<td><label class="label-mostrar">{{alumno.clase}}</label></td>
 						<td>
 						{% for horario in alumno.horarios %}
 							<label class="label-mostrar block">{{horario.dia}} <span class="gris_oscuro"> de </span>{{horario.inicio}}<span class="gris_oscuro"> a </span>{{horario.final}}</label>

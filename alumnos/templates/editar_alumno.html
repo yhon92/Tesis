@@ -157,7 +157,35 @@
 			<fieldset class="block" id="clase">
 				<legend>Clases</legend>
 			{% if clases_alumno %}
-				<fieldset class="transparente center-text">
+				<table>
+					<tr>
+						<th class="verde_oscuro center-text">Clase</th>
+						<th class="verde_oscuro center-text">Horarios</th>
+						<th class="verde_oscuro center-text">Guardar</th>
+					</tr>
+				{% for alumno in clases_alumno %}
+					<tr>
+						<td>
+							<select class="list large" name="lstCatedra" data-id="{{alumno.id}}" data-clase="{{alumno.clase_id}}" required>
+						{% for clase in clases %}
+							{% if clase.catedra.id == alumno.catedra %}
+								<option value="{{clase.id}}" {% if alumno.clase_id == clase.id %} selected {% endif%} >{{clase}}</option>
+							{% endif %}
+						{% endfor %}
+							</select>
+						</td>
+						<td>
+							<div data-id="{{alumno.id}}">
+						{% for horario in alumno.horarios %}
+							<label class="label-mostrar block">{{horario.dia}} <span class="gris_oscuro"> de </span>{{horario.inicio}}<span class="gris_oscuro"> a </span>{{horario.final}}</label>
+						{% endfor %}
+							</div>
+						</td>
+						<td class="center-text"><span class="icon-pencil" data-id='{{alumno.id}}'></span></td>
+					</tr>
+				{% endfor %}
+				</table>
+				<!--<fieldset class="transparente center-text">
 					<legend>Clase</legend>
 				{% for alumno in clases_alumno %}
 					<div>
@@ -176,10 +204,10 @@
 						<label data="horario" clase-id="{{alumno.horario.clase.id}}" data-id="{{alumno.horario.id}}" class="label-mostrar" id="{{alumno.id}}">{{alumno.horario.dia}} <span class="gris_oscuro">de</span> {{alumno.horario.hora_desde}} <span class="gris_oscuro">a</span> {{alumno.horario.hora_hasta}}</label>
 					</div>
 				{% endfor %}
-				</fieldset>
-				<div class="center-text">
+				</fieldset>-->
+				<!--<div class="center-text">
 					<button class="boton-on" id="guardarClase">Guardar</button>
-				</div>
+				</div>-->
 			{% else %}
 				<p class="center-text">No se ha sido asignado a ninguna clase</p>
 			{% endif %}
@@ -230,26 +258,40 @@
 	$('#guardarClase').on('click', enviarGuardarClase)
 	$('#guardarPrenda').on('click', enviarGuardarPrenda)
 
-	$('#clase fieldset select').each(function() {
+	$('#clase table td select').each(function() {
 		$(this).on('change',function(event) {
-			var $id = $(this).attr('id')
+			var $id = $(this).attr('data-id')
 			$.get('buscar-horario/' + $(this).val(), function(data) {
 				labelHorario($id, data)
+				$(this).attr('data-clase', data.clase);
 			})
 		})
 	})
 
 	function labelHorario(id, data) {
-		$('#clase fieldset div label').each(function() {
-			if ($(this).attr('id') == id) {
-				$(this).html(data.dia +' <span class="gris_oscuro">de</span> '+ data.desde +' <span class="gris_oscuro">a</span> '+ data.hasta)
-				$(this).attr('data-id', data.id)
-				$(this).attr('clase-id', data.clase)
-
+		$('#clase table td div').each(function() {
+			if ($(this).attr('data-id') == id) {
+				$horario = $(this)
+				$horario.html('')
+				$.each(data.horarios, function(i, valor) {
+					$('<label class="label-mostrar block">').html(valor.dia +' <span class="gris_oscuro">de</span> '+ valor.inicio +' <span class="gris_oscuro">a</span> '+ valor.final).appendTo($horario)
+				})			
 			}
 		})
 	}
 
+	$('#clase table td .icon-pencil').each(function() {
+		$(this).on('click', function(e) {
+			var $id = $(this).attr('data-id')
+			$('#clase table td select').each(function() {
+				$anterior = $(this).attr('data-clase')
+				if ($(this).attr('data-id') == $id) {
+					enviarGuardarClase($id, $(this).val(), $anterior)
+				}
+			})
+		})
+
+	});
 	function enviarGuardarDatos(e) {
 		e.preventDefault()
 		var menor = '0',
@@ -348,38 +390,29 @@
 		})
 	}
 
-	function enviarGuardarClase(e) {
-		e.preventDefault()
-		var clase = new Array()
-		$('#clase label[data=horario]').each(function(i) {
-			clase[i] = [{
-				id: $(this).attr('id'),
-				alumno: $('#hdnId').val(),
-				clase: $(this).attr('clase-id'),
-				horario: $(this).attr('data-id')
-			}]
-		})
+	function enviarGuardarClase(id, clase, anterior) {
 		var datos = {
-			items: clase
+				id: id,
+				alumno: $('#hdnId').val(),
+				clase: clase,
+				anterior: anterior
 		}
-		$.post('guardar-clase/', JSON.stringify(datos), function(data, textStatus, xhr) {
+		$.post('guardar-clase/', datos, function(data, textStatus, xhr) {
+			if (data.choque) {
+					alertify.log('¡Choque de Horarios!' +'<br>'+ 'Con: '+ data.clase)
+			}else if (data.lleno) {
+				alertify.log("¡No hay cupo!")
+			}else {
 				if (data.estado == 0) {
 					alertify.error("¡Error al editar clase!")
 				}else if (data.estado == 1){
 					alertify.success("¡Clases Editadas!")
-					if (data.lleno) {
-						$.each(data.lleno, function(i, valor) {
-							alertify.error("No hay cupo en: "+ valor.clase)
-						})
-					}
+				}else if (data.estado == 2){
+					alertify.error("¡Clase ya asignada!")
 				}else if (data.estado == 3){
 					alertify.log("¡No hubo modificación!")
-					if (data.lleno) {
-						$.each(data.lleno, function(i, valor) {
-							alertify.error("No hay cupo en: "+ valor.clase)
-						})
-					}
 				}
+			}
 		})
 	}
 

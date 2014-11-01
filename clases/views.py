@@ -37,17 +37,16 @@ def buscar_clase(request, id):
 def buscar_visualizar_clase(request, id):
 	if request.is_ajax():
 		template = 'visualizar_clase.html'
-		alumnos = Clase_Catedra.objects.filter(clase_id=id,  alumno_id__activo=True)
+		alumnos = Clase_Catedra.objects.filter(clase_id=id, alumno_id__activo=True)
 		for alumno in alumnos:
 			alumno.edad = calcular_edad(alumno.alumno.fecha_nacimiento)
 		clase = Clase.objects.get(id=id)
 		try:
 			horarios = Horario.objects.filter(clase_id=id)
-			print
 		except Exception:
 			return render(request, template, locals())
 		max = Clase.objects.values('cupo_max').filter(id=id)
-		used = Clase_Catedra.objects.filter(clase_id=id).count()
+		used = Clase_Catedra.objects.filter(clase_id=id, alumno_id__activo=True).count()
 		disponible = int(max[0]['cupo_max']) - int(used)
 		return render(request, template, locals())
 
@@ -153,7 +152,7 @@ def visualizar_pdf(request, id):
 	try:
 		clase = Clase.objects.get(id=id)
 		horario = Horario.objects.filter(clase_id=id)
-		alumnos = Clase_Catedra.objects.filter(clase_id=id)
+		alumnos = Clase_Catedra.objects.filter(clase_id=id, alumno_id__activo=True)
 		num = 0
 		for alumno in alumnos:
 			num = num + 1

@@ -36,7 +36,6 @@
 				clase: $clase.val(),
 				catedra: $horarios.attr('data-catedra')
 			}
-			console.log(datos)
 			$.post('asignar-catedra/', datos, function(data, textStatus, xhr) {
 				if (data.choque) {
 					alertify.log('¡Choque de Horarios!' +'<br>'+ 'Con: '+ data.clase)

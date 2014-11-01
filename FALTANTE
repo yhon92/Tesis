@@ -5,9 +5,7 @@ VALIDAR EL CHOQUE DE LOS HORARIOS DE LOS PROFESORES Y LOS ALUMNOS
 
 
 mostrar el ESTADO de los alumnos en los reportes
-arreglar los FILTORS de busqueda que solo puestren los alumnos activos
 arreglar los ENCABEZADOS de los reportes en pdf
-ordenar alfabeticamente como se muestran las actividades
 
 
 Imprimir Alumno(Si da tiempo (Y) )
@@ -19,7 +17,9 @@ ENCABEZADOS E INFORMACION EN LOS REPORTES
 
 
 REVISAR LAS VALIDADCIONES en los editar
+ordenar alfabeticamente como se muestran las actividades
 Revisar las asignaciones
+arreglar los FILTORS de busqueda que solo puestren los alumnos activos
 
 
 0 = error

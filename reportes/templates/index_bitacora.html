@@ -64,7 +64,6 @@
 					$lstAccion.empty();
 					$lstAccion.append('<option value="todos">Todos</option>')
 					$.each(data.acciones, function(i, valor) {
-						console.log(valor.accion)
 						$lstAccion.append('<option value="'+ valor.accion +'">'+ valor.accion +'</option>')
 					})
 				})

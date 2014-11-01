@@ -242,6 +242,7 @@ th {
 }
 [class^="icon-"],
 [class*=" icon-"] {
+  color: #444;
   font-family: 'icomoon';
   speak: none;
   font-style: normal;
@@ -328,6 +329,25 @@ th {
 .icon-upload:before {
   content: "\e603";
 }
+.icon-disk {
+  cursor: pointer;
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  -ms-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+}
+.icon-disk:hover {
+  color: #f00;
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  -ms-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+}
+.icon-disk:before {
+  content: "\e607";
+}
 .icon-remove {
   cursor: pointer;
   -webkit-transition: all 0.3s ease-out;
@@ -366,7 +386,7 @@ th {
 .icon-eye:before {
   content: "\e605";
 }
-.icon-file-pdf {
+.icon-pdf {
   cursor: pointer;
   -webkit-transition: all 0.3s ease-out;
   -moz-transition: all 0.3s ease-out;
@@ -374,7 +394,7 @@ th {
   -ms-transition: all 0.3s ease-out;
   transition: all 0.3s ease-out;
 }
-.icon-file-pdf:hover {
+.icon-pdf:hover {
   color: #f00;
   -webkit-transition: all 0.3s ease-out;
   -moz-transition: all 0.3s ease-out;
@@ -382,7 +402,7 @@ th {
   -ms-transition: all 0.3s ease-out;
   transition: all 0.3s ease-out;
 }
-.icon-file-pdf:before {
+.icon-pdf:before {
   content: "\e606";
 }
 .pika-single {
@@ -1019,6 +1039,18 @@ legend {
   box-shadow: 0 0 1px 1px #f00 inset;
   color: #444;
   outline: none;
+}
+.border-bottom {
+  border-bottom: 1px solid #02bc02;
+}
+.border-bottom:last-child {
+  border: none;
+}
+.border-bottom td {
+  padding: 4px;
+}
+.border-bottom td:last-child {
+  padding: 0;
 }
 .block {
   display: block;

@@ -181,7 +181,7 @@ def flush_db_tables(database_name):
 
 		# we drop and re-create the database, since the permissions will not be affected.
 		cursor.execute("drop database %s" % database_name)
-		cursor.execute("create database %s" % database_name)
+		cursor.execute("create database %s character set utf8" % database_name)
 
 		close_cursor(cursor)
 
@@ -196,9 +196,9 @@ def dump_database(request, local_settings):
 	try:
 		# do the sql dump
 		database = local_settings.DATABASES['default']['NAME']
-		DUMP_CMD = '%s -h %s --opt --compact --no-create-info --ignore-table='+database+'.auth_permission --ignore-table='+database+'.django_content_type --ignore-table='+database+'.django_migrations --ignore-table='+database+'.django_session --skip-add-locks -u %s -p%s %s'
+		# DUMP_CMD = '%s -h %s --opt --compact --no-create-info --ignore-table='+database+'.auth_permission --ignore-table='+database+'.django_content_type --ignore-table='+database+'.django_migrations --ignore-table='+database+'.django_session --skip-add-locks -u %s -p%s %s'
 		# DUMP_CMD = '%s -h %s --opt --compact --add-drop-table --skip-add-locks -u %s -p%s %s'
-		# DUMP_CMD = '%s -h %s -u %s -p%s %s'
+		DUMP_CMD = '%s -h %s -u %s -p%s %s'
 
 		cmd = DUMP_CMD % (local_settings.MYSQLDUMP, local_settings.DATABASES['default']['HOST'], local_settings.DATABASES['default']['USER'], local_settings.DATABASES['default']['PASSWORD'], local_settings.DATABASES['default']['NAME'])
 

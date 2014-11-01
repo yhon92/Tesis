@@ -9,6 +9,7 @@
   font-style normal
 
 [class^="icon-"], [class*=" icon-"]
+  color #444
   font-family 'icomoon'
   speak none
   font-style normal
@@ -57,6 +58,15 @@ verde_oscuro = red
   &:before
     content "\e603"
 
+.icon-disk
+  cursor pointer
+  transition all 0.3s ease-out
+  &:hover
+    color verde_oscuro
+    transition all 0.3s ease-out
+  &:before
+    content "\e607"
+
 .icon-remove
   cursor pointer
   transition all 0.3s ease-out
@@ -75,7 +85,7 @@ verde_oscuro = red
   &:before
     content "\e605"
 
-.icon-file-pdf
+.icon-pdf
   cursor pointer
   transition all 0.3s ease-out
   &:hover
@@ -83,4 +93,3 @@ verde_oscuro = red
     transition all 0.3s ease-out
   &:before
     content "\e606"
-

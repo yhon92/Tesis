@@ -39,7 +39,7 @@ def buscar_editar_profesor(request, id):
 def buscar_visualizar_profesor(request, id):
 	if request.is_ajax():
 		profesor = Profesor.objects.get(id=id)
-		instrumentos = Clase_Individual.objects.filter(profesor_id=id)
+		instrumentos = Clase_Individual.objects.filter(profesor_id=id, alumno_id__activo=True)
 		actividades = Designacion.objects.filter(profesor_id=id)
 		clases = Horario.objects.filter(clase__profesor_id=id)
 		template = 'visualizar_profesor.html'

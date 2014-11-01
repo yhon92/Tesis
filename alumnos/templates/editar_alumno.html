@@ -164,7 +164,7 @@
 						<th class="verde_oscuro center-text">Guardar</th>
 					</tr>
 				{% for alumno in clases_alumno %}
-					<tr>
+					<tr class="border-bottom">
 						<td>
 							<select class="list large" name="lstCatedra" data-id="{{alumno.id}}" data-clase="{{alumno.clase_id}}" required>
 						{% for clase in clases %}
@@ -181,7 +181,7 @@
 						{% endfor %}
 							</div>
 						</td>
-						<td class="center-text"><span class="icon-pencil" data-id='{{alumno.id}}'></span></td>
+						<td class="center-text"><span class="icon-disk" data-id='{{alumno.id}}'></span></td>
 					</tr>
 				{% endfor %}
 				</table>
@@ -280,7 +280,7 @@
 		})
 	}
 
-	$('#clase table td .icon-pencil').each(function() {
+	$('#clase table td .icon-disk').each(function() {
 		$(this).on('click', function(e) {
 			var $id = $(this).attr('data-id')
 			$('#clase table td select').each(function() {

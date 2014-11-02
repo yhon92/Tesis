@@ -1,4 +1,11 @@
 <section>
+	<div>
+		<label>Imprimir: </label>
+		<button class="icon-pdf" id="imprimirAlumno"></button>
+		<!--<label class="padding-left">Constancia de Trabajo: </label>
+		<button class="icon-pdf" id="imprimirConstancia"></button>-->
+		<input type="hidden" id="hdnId" value="{{profesor.id}}">
+	</div>
 	<div class="inline-block align-top align-lef">
 		<div class="align-top">
 			<fieldset class="block">
@@ -60,7 +67,7 @@
 				{% endfor %}
 				</fieldset>
 			{% else %}
-				<p>No se ha sido asignado a como profesor de ningun instrumento</p>
+				<p>No se ha asignado como profesor de ningun instrumento</p>
 			{% endif %}
 			</fieldset>
 		</div>
@@ -87,7 +94,7 @@
 				{% endfor %}
 				</fieldset>
 			{% else %}
-				<p>No se ha sido designado a ninguna actividad</p>
+				<p>No se ha designado a ninguna actividad</p>
 			{% endif %}
 			</fieldset>
 		</div>
@@ -95,26 +102,42 @@
 			<fieldset class="block">
 				<legend>Clases</legend>
 			{% if clases %}
-				<fieldset class="transparente center-text">
-					<legend>Clase</legend>
-				{% for profesor in clases %}
-					<div>
-						<label class="label-mostrar">{{profesor.clase}}</label>
-					</div>
+				<table>
+					<tr>
+						<th class="verde_oscuro center-text">Clase</th>
+						<th class="verde_oscuro center-text">Horarios</th>
+					</tr>
+				{% for alumno in clases %}
+					<tr class="border-bottom">
+						<td><label class="label-mostrar">{{alumno.clase}}</label></td>
+						<td class="center-text">
+					{% if alumno.horarios %}
+						{% for horario in alumno.horarios %}
+								<label class="label-mostrar block">{{horario.dia}} <span class="gris_oscuro"> de </span>{{horario.inicio}}<span class="gris_oscuro"> a </span>{{horario.final}}</label>
+						{% endfor %}
+					{% else %}
+						<span class="gris_oscuro">No asignano aún</span>
+					{% endif %}
+						</td>
+					</tr>
 				{% endfor %}
-				</fieldset>
-				<fieldset class="transparente center-text">
-					<legend>Horario</legend>
-				{% for profesor in clases %}
-					<div>
-						<label class="label-mostrar">{{profesor.dia}} <span class="gris_oscuro"> de </span> {{profesor.hora_desde}} <span class="gris_oscuro"> a </span> {{profesor.hora_hasta}}</label>
-					</div>
-				{% endfor %}
-				</fieldset>
+				</table>
 			{% else %}
-				<p>No se ha sido asignado a ninguna clase</p>
+				<p class="center-text">No se ha asignado a ninguna clase</p>
 			{% endif %}
 			</fieldset>
 		</div>
 	</div>
 </section>
+<script>
+	$('#imprimirProfesor').on('click', function(e) {
+		e.preventDefault()
+		$id = $('#hdnId').val()
+		try{
+			window.open('imprimir/'+ $id, '_blank')
+			return false
+		}catch(err){
+			alertify.error("¡Error al procesar su solicitud!")
+		}
+	})
+</script>

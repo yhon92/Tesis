@@ -1,4 +1,11 @@
 <section>
+	<div>
+		<label>Imprimir: </label>
+		<button class="icon-pdf" id="imprimirAlumno"></button>
+		<!--<label class="padding-left">Constancia de Estudio: </label>
+		<button class="icon-pdf" id="imprimirConstancia"></button>-->
+		<input type="hidden" id="hdnId" value="{{alumno.id}}">
+	</div>
 	<div class="inline-block align-top align-lef">
 		<div class="align-top">
 			<fieldset class="block">
@@ -82,7 +89,7 @@
 				{% endfor %}
 				</fieldset>
 			{% else %}
-				<p class="center-text">No se ha sido asignado a ningun instrumento</p>
+				<p class="center-text">No se ha asignado a ningun instrumento</p>
 			{% endif %}
 			</fieldset>
 		</div>
@@ -109,7 +116,7 @@
 				{% endfor %}
 				</fieldset>
 			{% else %}
-				<p class="center-text">No se ha sido asignado a ninguna actividad</p>
+				<p class="center-text">No se ha asignado a ninguna actividad</p>
 			{% endif %}
 			</fieldset>
 		</div>
@@ -133,24 +140,8 @@
 					</tr>
 				{% endfor %}
 				</table>
-				<!--<fieldset class="transparente center-text">
-					<legend>Clase</legend>
-				{% for alumno in clases %}
-					<div>
-						<label class="label-mostrar">{{alumno.clase}}</label>
-					</div>
-				{% endfor %}
-				</fieldset>
-				<fieldset class="transparente center-text">
-					<legend>Horario</legend>
-				{% for alumno in horario %}
-					<div>
-						<label class="label-mostrar">{{alumno.dia}} <span class="gris_oscuro"> de </span> {{alumno.inicio}} <span class="gris_oscuro"> a </span> {{alumno.final}}</label>
-					</div>
-				{% endfor %}
-				</fieldset>-->
 			{% else %}
-				<p class="center-text">No se ha sido asignado a ninguna clase</p>
+				<p class="center-text">No se ha asignado a ninguna clase</p>
 			{% endif %}
 			</fieldset>
 		</div>
@@ -187,9 +178,21 @@
 				{% endfor %}
 				</fieldset>
 			{% else %}
-				<p class="center-text">No se ha sido asignado a ninguna clase</p>
+				<p class="center-text">No se ha asignado ninguna prenda</p>
 			{% endif %}
 			</fieldset>
 		</div>
 	</div>
 </section>
+<script>
+	$('#imprimirAlumno').on('click', function(e) {
+		e.preventDefault()
+		$id = $('#hdnId').val()
+		try{
+			window.open('imprimir/'+ $id, '_blank')
+			return false
+		}catch(err){
+			alertify.error("¡Error al procesar su solicitud!")
+		}
+	})
+</script>

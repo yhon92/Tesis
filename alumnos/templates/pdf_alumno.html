@@ -1,0 +1,197 @@
+{% extends "base_pdf_vertical.html" %}
+{% block style %}
+<style>
+	fieldset{
+		text-align: center;
+	}
+	fieldset div{
+		text-align: left;
+	}
+	legend{
+		font-size: 12pt;
+	}
+	td, tr{
+		vertical-align: top;
+	}
+</style>
+{% endblock style %}
+{% block header %}
+	<h2>Información del Alumno</h2>
+{% endblock header %}
+{% block content %}
+			<fieldset>
+				<legend>Datos</legend>
+				<table border="">
+					<td>
+						<div>
+							<label style="font-weight: bold">Nombres:</label>
+							<label>{{alumno.nombres}}</label>
+						</div>
+						<div>
+							<label style="font-weight: bold">Cédula:</label>
+							<label>{{alumno.cedula}}</label>
+						</div>
+						<div>
+							<label style="font-weight: bold">Fecha Nacimiento:</label>
+							<label>{{alumno.fecha_nacimiento|date:'d M Y'}}</label>
+						</div>
+						<div>
+							<label style="font-weight: bold">Fecha Actualización:</label>
+							<label>{{alumno.fecha_actualizacion|date:'d M Y'}}</label>
+						</div>
+					</td>
+					<td>
+						<div>
+							<label style="font-weight: bold">Apellidos:</label>
+							<label>{{alumno.apellidos}}</label>
+						</div>
+						<div>
+							<label style="font-weight: bold">Sexo:</label>
+						{% if alumno %}
+							{% if alumno.sexo == "F" %}
+								<label>Femenino</label>
+							{% else %}
+								<label>Masculino</label>
+							{% endif %}
+						{% endif %}
+						</div>
+						<div>
+							<label style="font-weight: bold">Fecha Ingreso:</label>
+							<label>{{alumno.fecha_ingreso|date:'d M Y'}}</label>
+						</div>
+					</td>
+				</table>
+			</fieldset>
+		<br><br>
+			<fieldset>
+				<legend>Clases Individuales</legend>
+			{% if instrumentos %}
+				<table border="">
+					<tr>
+						<th>Instrumento</th>
+						<th>Nivel</th>
+						<th>Profesor</th>
+					</tr>
+					<tr>
+						<td>
+					{% for alumno in instrumentos %}
+						<div style="text-align: center;">
+							<label class="label-mostrar">{{alumno.instrumento.nombre}}</label>
+						</div>
+					{% endfor %}
+						</td>
+						<td>
+					{% for alumno in instrumentos %}
+						<div style="text-align: center;">
+							<label class="label-mostrar">{{alumno.nivel.nombre}}</label>
+						</div>
+					{% endfor %}
+						</td>
+						<td>
+					{% for alumno in instrumentos %}
+						<div style="text-align: center;">
+							<label>{{alumno.profesor.nombres}} {{alumno.profesor.apellidos}}</label>
+						</div>
+					{% endfor %}
+						</td>
+					</tr>
+				</table>
+			{% else %}
+				<p>No se ha asignado a ningun instrumento</p>
+			{% endif %}
+			</fieldset>
+		<br><br>
+			<fieldset>
+				<legend>Actividades</legend>
+			{% if actividades %}
+				<table border="">
+					<tr>
+						<th>Actividad</th>
+						<th>Instrumento</th>
+					</tr>
+					<tr>
+						<td>
+					{% for alumno in actividades %}
+						<div style="text-align: center;">
+							<label>{{alumno.actividad.tipo}} {{alumno.actividad.nombre}}</label>
+						</div>
+					{% endfor %}
+						</td>
+						<td>
+					{% for alumno in actividades %}
+						<div style="text-align: center;">
+							<label>{{alumno.instrumento.nombre}} {{alumno.clasificacion}}</label>
+						</div>
+					{% endfor %}
+						</td>
+					</tr>
+				</table>
+			{% else %}
+				<p>No se ha asignado a ninguna actividad</p>
+			{% endif %}
+			</fieldset>
+		<br><br>
+		<div class="align-top">
+			<fieldset class="block">
+				<legend>Clases</legend>
+			{% if clases %}
+				<table border="">
+					<tr>
+						<th class="verde_oscuro center-text">Clase</th>
+						<th class="verde_oscuro center-text">Horarios</th>
+					</tr>
+				{% for alumno in clases %}
+					<tr class="border-bottom">
+						<td><label class="label-mostrar">{{alumno.clase}}</label></td>
+						<td>
+						{% for horario in alumno.horarios %}
+							<label style="display: block">{{horario.dia}} <span class="gris_oscuro"> de </span>{{horario.inicio}}<span class="gris_oscuro"> a </span>{{horario.final}}</label>
+						{% endfor %}
+						</td>
+					</tr>
+				{% endfor %}
+				</table>
+			{% else %}
+				<p class="center-text">No se ha asignado a ninguna clase</p>
+			{% endif %}
+			</fieldset>
+		</div>
+		<br><br>
+		<div class="align-top center-text">
+			<fieldset>
+				<legend>Prendas</legend>
+			{% if prendas %}
+				<fieldset class="transparente center-text">
+					<legend>Prenda</legend>
+				{% for alumno in prendas %}
+					<div>
+						<label class="label-mostrar">{{alumno.prenda}}</label>
+					</div>
+				{% endfor %}
+				</fieldset>
+				<fieldset class="transparente center-text">
+					<legend>Talla</legend>
+				{% for alumno in prendas %}
+					<div>
+						<label class="label-mostrar">{{alumno.talla}}</label>
+					</div>
+				{% endfor %}
+				</fieldset>
+				<fieldset class="transparente center-text">
+					<legend>Otorgado</legend>
+				{% for alumno in prendas %}
+					<div>
+					{% if alumno.otorgado = True %}
+						<label class="label-mostrar">SI</label>
+					{% else %}
+						<label class="label-mostrar">NO</label>
+					{% endif %}
+					</div>
+				{% endfor %}
+				</fieldset>
+			{% else %}
+				<p class="center-text">No se ha asignado ninguna prenda</p>
+			{% endif %}
+			</fieldset>
+		</div>
+{% endblock content %}

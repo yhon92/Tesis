@@ -7,6 +7,7 @@ from django.shortcuts import render
 from .models import Profesor, Cargo, Designacion
 from actividades.models import Tipo_Actividad, Actividad
 from alumnos.models import Clase_Individual
+from clases.models import Clase
 from horarios.models import Horario
 from sistema.bitacora import set_bitacora
 
@@ -41,7 +42,15 @@ def buscar_visualizar_profesor(request, id):
 		profesor = Profesor.objects.get(id=id)
 		instrumentos = Clase_Individual.objects.filter(profesor_id=id, alumno_id__activo=True)
 		actividades = Designacion.objects.filter(profesor_id=id)
-		clases = Horario.objects.filter(clase__profesor_id=id)
+		datos_cl = Clase.objects.filter(profesor_id=id).order_by('catedra_id')
+		clases = list()
+		for dato_cl in datos_cl:
+			horarios = list()
+			clase = str(dato_cl)
+			datos_h = Horario.objects.filter(clase_id=dato_cl.id)
+			for dato_h in datos_h:
+				horarios.append({'dia': str(dato_h.dia), 'inicio': str(dato_h.inicio), 'final': str(dato_h.final)})
+			clases.append({'clase': clase, 'horarios': horarios})
 		template = 'visualizar_profesor.html'
 		return render(request, template, locals())
 	else:

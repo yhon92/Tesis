@@ -1,25 +1,26 @@
 FALTANTE
 
-
-VALIDAR EL CHOQUE DE LOS HORARIOS DE LOS PROFESORES Y LOS ALUMNOS
+MODIFICAR COMO RESPALDAR Y RESTARURAR EN EL TRABAJO ESCRITO
+CARTA ESTRUCTURADA
+DICCIONARIO DE DATOS
 
 
 mostrar el ESTADO de los alumnos en los reportes
 arreglar los ENCABEZADOS de los reportes en pdf
 
 
-Imprimir Alumno(Si da tiempo (Y) )
+Imprimir Alumno
+Arreglar la tabla de prendas
 Constancia de estudio
+
+Imprimir Profesor(Si da tiempo (Y) )
 
 
 Revisar que esten todas las Bitacoras
 ENCABEZADOS E INFORMACION EN LOS REPORTES
 
 
-REVISAR LAS VALIDADCIONES en los editar
-ordenar alfabeticamente como se muestran las actividades
-Revisar las asignaciones
-arreglar los FILTORS de busqueda que solo puestren los alumnos activos
+Verificar que muestren los alumnos en las listas activos
 
 
 0 = error
@@ -37,7 +38,6 @@ if (data.estado == 0) {
 	
 }
 
-Los alumnos deben relacionarce con las clase-catedras y no con los horarios para que una clase pueda tener mas de un dia-horario
 
 Reestructurar la base de datos con una tabla para orquestas, otra para coros y una de voces, y la de actividades que sea para talleres, seccionales, y otros
 

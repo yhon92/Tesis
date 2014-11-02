@@ -15,6 +15,15 @@ from instrumentos.models import Instrumento
 from profesores.models import Profesor
 from sistema.bitacora import set_bitacora
 
+##################################-Para PDF-##################################
+import cgi
+import ho.pisa as pisa
+import cStringIO as StringIO
+from django.db import connection
+from django.template import RequestContext
+from django.template.loader import render_to_string
+##################################-Para PDF-##################################
+
 @login_required
 def index(request):
 	template = 'index_alumno.html'
@@ -177,6 +186,11 @@ def buscar_editar_alumno(request, id):
 		actividades_alumno = Alumno_Actividad.objects.filter(alumno_id=id)
 		instrumentos_actividad = Instrumento.objects.filter(instrumento__nombre='Voz').order_by('id')
 		clases = Clase.objects.all().order_by('catedra__id', 'nivel__id', 'seccion__id')
+		ids = list()
+		for clase in clases:
+			if not Horario.objects.filter(clase_id=clase.id):
+				ids.append(clase.id)
+		clases = clases.exclude(id__in=ids)
 		datos_cl = Clase_Catedra.objects.filter(alumno_id=id).order_by('clase_id__catedra_id')
 		clases_alumno = list()
 		for dato_cl in datos_cl:
@@ -205,7 +219,7 @@ def buscar_visualizar_alumno(request, id):
 		for dato_cl in datos_cl:
 			horarios = list()
 			clase = str(dato_cl.clase)
-			datos_h = Horario.objects.filter(clase_id=dato_cl.clase.id)
+			datos_h = Horario.objects.filter(clase_id=dato_cl.clase.id).order_by('dia_id')
 			for dato_h in datos_h:
 				horarios.append({'dia': str(dato_h.dia), 'inicio': str(dato_h.inicio), 'final': str(dato_h.final)})
 			clases.append({'clase': clase, 'horarios': horarios})
@@ -234,8 +248,12 @@ def catedra(request, id):
 		ids = list()
 		for clase in clases:
 			ids.append(str(clase.clase.catedra.id))
-		# clases = Clase.objects.exclude().order_by('catedra', 'nivel', 'seccion')
 		clases = Clase.objects.exclude(catedra_id__in=ids).order_by('catedra', 'nivel', 'seccion')
+		ids = list()
+		for clase in clases:
+			if not Horario.objects.filter(clase_id=clase.id):
+				ids.append(clase.id)
+		clases = clases.exclude(id__in=ids)
 		template = 'asignar_catedra.html'
 		return render(request, template, locals())
 	else:
@@ -299,7 +317,7 @@ def guardar_clase(request):
 				else:
 					print 'Horario Aceptable'
 					max = Clase.objects.get(id=request.POST['clase'])
-					used = Clase_Catedra.objects.filter(clase_id=request.POST['clase']).count()
+					used = Clase_Catedra.objects.filter(clase_id=request.POST['clase'], alumno_id__activo=True).count()
 					disponible = int(max.cupo_max) - int(used)
 					if disponible > 0:
 						antes = 'Clase: '+'"'+ str(self.clase) +'"'
@@ -502,6 +520,28 @@ def visualizar(request):
 	else:
 		raise Http404
 
+@login_required
+def visualizar_pdf(request, id):
+	# if request.is_ajax():
+	alumno = Alumno.objects.get(id=id)
+	prendas = Alumno_Prenda.objects.filter(alumno_id=id)
+	instrumentos = Clase_Individual.objects.filter(alumno_id=id)
+	actividades = Alumno_Actividad.objects.filter(alumno_id=id)
+	datos_cl = Clase_Catedra.objects.filter(alumno_id=id).order_by('clase_id__catedra_id')
+	clases = list()
+	for dato_cl in datos_cl:
+		horarios = list()
+		clase = str(dato_cl.clase)
+		datos_h = Horario.objects.filter(clase_id=dato_cl.clase.id).order_by('dia_id')
+		for dato_h in datos_h:
+			horarios.append({'dia': str(dato_h.dia), 'inicio': str(dato_h.inicio), 'final': str(dato_h.final)})
+		clases.append({'clase': clase, 'horarios': horarios})
+	pagesize = 'Letter'
+	html = render_to_string('pdf_alumno.html', locals(), context_instance=RequestContext(request))
+	return generar_pdf(html)
+	# else:
+		# raise Http404
+
 ##########################################################################################################################
 def choqueHorario(nuevoInicio, nuevoFinal, inicio, final):
 	nuevoInicio = convertirHora(nuevoInicio)
@@ -524,4 +564,12 @@ def convertirHora(hora):
 	else:
 		minutos = str(hora.tm_min)
 	return horas+':'+minutos
-			# horarios.append({'clase': horarios.clase.id, 'id': horarios.id, 'dia': horarios.dia.nombre, 'inicio': horarios.inicio, 'final': horarios.final})
+
+##################################-Para PDF-##################################
+def generar_pdf(html):
+	result = StringIO.StringIO()
+	pdf = pisa.pisaDocument(StringIO.StringIO(html.encode("UTF-8")), result)
+	if not pdf.err:
+		return HttpResponse(result.getvalue(), content_type='application/pdf')
+	return HttpResponse('Error al generar el PDF: %s' % cgi.escape(html))
+##################################-Para PDF-##################################

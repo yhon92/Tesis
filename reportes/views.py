@@ -337,6 +337,7 @@ def cargar_combo(request):
 		return JsonResponse({'acciones': acciones})
 	else:
 		raise Http404
+		
 ##################################-Para PDF-##################################
 def generar_pdf(html):
 	result = StringIO.StringIO()

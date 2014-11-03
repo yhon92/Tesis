@@ -522,7 +522,6 @@ def visualizar(request):
 
 @login_required
 def visualizar_pdf(request, id):
-	# if request.is_ajax():
 	alumno = Alumno.objects.get(id=id)
 	prendas = Alumno_Prenda.objects.filter(alumno_id=id)
 	instrumentos = Clase_Individual.objects.filter(alumno_id=id)
@@ -539,8 +538,6 @@ def visualizar_pdf(request, id):
 	pagesize = 'Letter'
 	html = render_to_string('pdf_alumno.html', locals(), context_instance=RequestContext(request))
 	return generar_pdf(html)
-	# else:
-		# raise Http404
 
 ##########################################################################################################################
 def choqueHorario(nuevoInicio, nuevoFinal, inicio, final):

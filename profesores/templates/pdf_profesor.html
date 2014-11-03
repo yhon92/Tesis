@@ -17,7 +17,7 @@
 </style>
 {% endblock style %}
 {% block header %}
-	<h1>Información del Alumno</h1>
+	<h1>Información del Profesor</h1>
 {% endblock header %}
 {% block content %}
 	<fieldset>
@@ -27,40 +27,40 @@
 				<td>
 					<div>
 						<label style="font-weight: bold">Nombres:</label>
-						<label>{{alumno.nombres}}</label>
+						<label>{{profesor.nombres}}</label>
 					</div>
 					<div>
 						<label style="font-weight: bold">Cédula:</label>
-						<label>{{alumno.cedula}}</label>
+						<label>{{profesor.cedula}}</label>
 					</div>
-					<div>
+					<!--<div>
 						<label style="font-weight: bold">Fecha Nacimiento:</label>
-						<label>{{alumno.fecha_nacimiento|date:'d M Y'}}</label>
+						<label>{{profesor.fecha_nacimiento|date:'d M Y'}}</label>
 					</div>
 					<div>
 						<label style="font-weight: bold">Fecha Actualización:</label>
-						<label>{{alumno.fecha_actualizacion|date:'d M Y'}}</label>
-					</div>
+						<label>{{profesor.fecha_actualizacion|date:'d M Y'}}</label>
+					</div>-->
 				</td>
 				<td>
 					<div>
 						<label style="font-weight: bold">Apellidos:</label>
-						<label>{{alumno.apellidos}}</label>
+						<label>{{profesor.apellidos}}</label>
 					</div>
 					<div>
 						<label style="font-weight: bold">Sexo:</label>
-						{% if alumno %}
-							{% if alumno.sexo == "F" %}
+						{% if profesor %}
+							{% if profesor.sexo == "F" %}
 								<label>Femenino</label>
 							{% else %}
 								<label>Masculino</label>
 							{% endif %}
 						{% endif %}
 					</div>
-					<div>
+					<!--<div>
 						<label style="font-weight: bold">Fecha Ingreso:</label>
-						<label>{{alumno.fecha_ingreso|date:'d M Y'}}</label>
-					</div>
+						<label>{{profesor.fecha_ingreso|date:'d M Y'}}</label>
+					</div>-->
 				</td>
 			</tr>
 		</table>
@@ -71,29 +71,29 @@
 	{% if instrumentos %}
 		<table border="" width="560px" align="center">
 			<tr>
+				<th>Alumnos</th>
 				<th width="130px">Instrumento</th>
 				<th width="100px">Nivel</th>
-				<th>Profesor</th>
 			</tr>
 			<tr>
 				<td>
-				{% for alumno in instrumentos %}
+				{% for profesor in instrumentos %}
 					<div style="text-align: center;">
-						<label class="label-mostrar">{{alumno.instrumento.nombre}}</label>
+						<label>{{profesor.alumno.nombres}} {{profesor.alumno.apellidos}}</label>
 					</div>
 				{% endfor %}
 				</td>
 				<td>
-				{% for alumno in instrumentos %}
+				{% for profesor in instrumentos %}
 					<div style="text-align: center;">
-						<label class="label-mostrar">{{alumno.nivel.nombre}}</label>
+						<label class="label-mostrar">{{profesor.instrumento.nombre}}</label>
 					</div>
 				{% endfor %}
 				</td>
 				<td>
-				{% for alumno in instrumentos %}
+				{% for profesor in instrumentos %}
 					<div style="text-align: center;">
-						<label>{{alumno.profesor.nombres}} {{alumno.profesor.apellidos}}</label>
+						<label class="label-mostrar">{{profesor.nivel.nombre}}</label>
 					</div>
 				{% endfor %}
 				</td>
@@ -110,20 +110,20 @@
 		<table border="" width="500px" align="center">
 			<tr>
 				<th>Actividad</th>
-				<th width="130px">Instrumento</th>
+				<th width="130px">Cargo</th>
 			</tr>
 			<tr>
 				<td>
-				{% for alumno in actividades %}
+				{% for profesor in actividades %}
 					<div style="text-align: center;">
-						<label>{{alumno.actividad.tipo}} {{alumno.actividad.nombre}}</label>
+						<label>{{profesor.actividad}}</label>
 					</div>
 				{% endfor %}
 				</td>
 				<td>
-				{% for alumno in actividades %}
+				{% for profesor in actividades %}
 					<div style="text-align: center;">
-						<label>{{alumno.instrumento.nombre}} {{alumno.clasificacion}}</label>
+						<label>{{profesor.cargo}}</label>
 					</div>
 				{% endfor %}
 				</td>
@@ -142,13 +142,17 @@
 				<th>Clase</th>
 				<th>Horarios</th>
 			</tr>
-			{% for alumno in clases %}
+			{% for profesor in clases %}
 			<tr>
-				<td><label>{{alumno.clase}}</label></td>
+				<td><label>{{profesor.clase}}</label></td>
 				<td>
-				{% for horario in alumno.horarios %}
-					<label style="display: block">{{horario.dia}} de {{horario.inicio}} a {{horario.final}}</label>
-				{% endfor %}
+				{% if profesor.horarios %}
+					{% for horario in profesor.horarios %}
+						<label style="display: block">{{horario.dia}} de {{horario.inicio}} a {{horario.final}}</label>
+					{% endfor %}
+				{% else %}
+					<span>No asignano aún</span>
+				{% endif %}
 				</td>
 			</tr>
 			{% endfor %}
@@ -157,7 +161,7 @@
 			<p>No se ha asignado a ninguna clase</p>
 		{% endif %}
 	</fieldset>
-<br><br>
+<!--<br><br>
 	<fieldset>
 		<legend>Prendas</legend>
 		{% if prendas %}
@@ -169,23 +173,23 @@
 			</tr>
 			<tr>
 				<td>
-				{% for alumno in prendas %}
+				{% for profesor in prendas %}
 					<div style="text-align: center;">
-						<label class="label-mostrar">{{alumno.prenda}}</label>
+						<label class="label-mostrar">{{profesor.prenda}}</label>
 					</div>
 				{% endfor %}
 				</td>
 				<td>
-				{% for alumno in prendas %}
+				{% for profesor in prendas %}
 					<div style="text-align: center;">
-						<label class="label-mostrar">{{alumno.talla}}</label>
+						<label class="label-mostrar">{{profesor.talla}}</label>
 					</div>
 				{% endfor %}
 				</td>
 				<td>
-				{% for alumno in prendas %}
+				{% for profesor in prendas %}
 					<div style="text-align: center;">
-					{% if alumno.otorgado = True %}
+					{% if profesor.otorgado = True %}
 						<label>SI</label>
 					{% else %}
 						<label>NO</label>
@@ -198,5 +202,5 @@
 		{% else %}
 			<p>No se ha asignado ninguna prenda</p>
 		{% endif %}
-	</fieldset>
+	</fieldset>-->
 {% endblock content %}

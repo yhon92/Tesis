@@ -1,7 +1,7 @@
 <section>
 	<div>
 		<label>Imprimir: </label>
-		<button class="icon-pdf" id="imprimirAlumno"></button>
+		<button class="icon-pdf" id="imprimirProfesor"></button>
 		<!--<label class="padding-left">Constancia de Trabajo: </label>
 		<button class="icon-pdf" id="imprimirConstancia"></button>-->
 		<input type="hidden" id="hdnId" value="{{profesor.id}}">
@@ -107,12 +107,12 @@
 						<th class="verde_oscuro center-text">Clase</th>
 						<th class="verde_oscuro center-text">Horarios</th>
 					</tr>
-				{% for alumno in clases %}
+				{% for profesor in clases %}
 					<tr class="border-bottom">
-						<td><label class="label-mostrar">{{alumno.clase}}</label></td>
+						<td><label class="label-mostrar">{{profesor.clase}}</label></td>
 						<td class="center-text">
-					{% if alumno.horarios %}
-						{% for horario in alumno.horarios %}
+					{% if profesor.horarios %}
+						{% for horario in profesor.horarios %}
 								<label class="label-mostrar block">{{horario.dia}} <span class="gris_oscuro"> de </span>{{horario.inicio}}<span class="gris_oscuro"> a </span>{{horario.final}}</label>
 						{% endfor %}
 					{% else %}

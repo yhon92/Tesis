@@ -11,6 +11,15 @@ from clases.models import Clase
 from horarios.models import Horario
 from sistema.bitacora import set_bitacora
 
+##################################-Para PDF-##################################
+import cgi
+import ho.pisa as pisa
+import cStringIO as StringIO
+from django.db import connection
+from django.template import RequestContext
+from django.template.loader import render_to_string
+##################################-Para PDF-##################################
+
 @login_required
 def index(request):
 	template = 'index_profesor.html'
@@ -204,3 +213,30 @@ def visualizar(request):
 		return render(request, template, locals())
 	else:
 		raise Http404
+
+@login_required
+def visualizar_pdf(request, id):
+	profesor = Profesor.objects.get(id=id)
+	instrumentos = Clase_Individual.objects.filter(profesor_id=id, alumno_id__activo=True)
+	actividades = Designacion.objects.filter(profesor_id=id)
+	datos_cl = Clase.objects.filter(profesor_id=id).order_by('catedra_id')
+	clases = list()
+	for dato_cl in datos_cl:
+		horarios = list()
+		clase = str(dato_cl)
+		datos_h = Horario.objects.filter(clase_id=dato_cl.id)
+		for dato_h in datos_h:
+			horarios.append({'dia': str(dato_h.dia), 'inicio': str(dato_h.inicio), 'final': str(dato_h.final)})
+		clases.append({'clase': clase, 'horarios': horarios})
+	pagesize = 'Letter'
+	html = render_to_string('pdf_profesor.html', locals(), context_instance=RequestContext(request))
+	return generar_pdf(html)
+
+##################################-Para PDF-##################################
+def generar_pdf(html):
+	result = StringIO.StringIO()
+	pdf = pisa.pisaDocument(StringIO.StringIO(html.encode("UTF-8")), result)
+	if not pdf.err:
+		return HttpResponse(result.getvalue(), content_type='application/pdf')
+	return HttpResponse('Error al generar el PDF: %s' % cgi.escape(html))
+##################################-Para PDF-##################################

@@ -36,7 +36,7 @@ def buscar_actividad(request, id):
 def buscar_visualizar_actividad(request, id):
 	if request.is_ajax():
 		template = 'visualizar_actividad.html'
-		alumnos = Alumno_Actividad.objects.filter(actividad_id=id, alumno_id__activo=True)
+		alumnos = Alumno_Actividad.objects.filter(actividad_id=id, alumno_id__activo=True).order_by('instrumento__id', 'clasificacion')
 		actividad = Actividad.objects.get(id=id)
 		for alumno in alumnos:
 			alumno.edad = calcular_edad(alumno.alumno.fecha_nacimiento)
@@ -57,8 +57,8 @@ def guardar_actividad(request):
 	if request.is_ajax() and request.POST:
 		actividad = Actividad.objects.filter(id=request.POST['id'])	
 		for dato in actividad:
-			if str(dato.nombre) != request.POST['nombre'].title() or str(dato.nivel.id) != request.POST['nivel']:
-				antes = 'Nombre: '+'"'+ str(dato.nombre) +'"'+', Nivel: '+'"'+ str(dato.nivel) +'"'
+			if dato.nombre != request.POST['nombre'].title() or str(dato.nivel.id) != request.POST['nivel']:
+				antes = 'Nombre: '+'"'+ dato.nombre +'"'+', Nivel: '+'"'+ str(dato.nivel) +'"'
 			else:
 				return JsonResponse({'estado': 3})
 		if 'antes' in locals():
@@ -68,8 +68,8 @@ def guardar_actividad(request):
 				return JsonResponse({'estado': 0})
 			actividad = Actividad.objects.filter(id=request.POST['id'])	
 			for dato in actividad:
-				ahora = 'Nombre: '+'"'+ str(dato.nombre) +'"'+', Nivel: '+'"'+ str(dato.nivel) +'"'
-			set_bitacora(request, 'Actividades', 'Editar', 'Antes['+ str(antes) +']'+' - Ahora['+ str(ahora) +']')
+				ahora = 'Nombre: '+'"'+ dato.nombre +'"'+', Nivel: '+'"'+ str(dato.nivel) +'"'
+			set_bitacora(request, 'Actividades', 'Editar', 'Antes['+ antes +']'+' - Ahora['+ ahora +']')
 			return JsonResponse({'estado': 1})
 	else:
 		raise Http404

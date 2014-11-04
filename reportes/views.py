@@ -28,7 +28,7 @@ def bitacora(request):
 
 @login_required
 def cargar_opcion(request):
-	instrumentos = Instrumento.objects.order_by('id').all()
+	instrumentos = Instrumento.objects.filter(instrumento__nombre='Clasico').order_by('id')
 	niveles_i = Nivel_I.objects.order_by('id').all()
 	actividades = Actividad.objects.order_by('tipo','nombre').all()
 	# clases = Clase.objects.order_by('catedra', 'nivel', 'seccion').all()

@@ -51,7 +51,7 @@ def buscar_visualizar_profesor(request, id):
 		profesor = Profesor.objects.get(id=id)
 		instrumentos = Clase_Individual.objects.filter(profesor_id=id, alumno_id__activo=True)
 		actividades = Designacion.objects.filter(profesor_id=id)
-		datos_cl = Clase.objects.filter(profesor_id=id).order_by('catedra_id')
+		datos_cl = Clase.objects.filter(profesor_id=id).order_by('catedra_id', 'nivel_id', 'seccion_id')
 		clases = list()
 		for dato_cl in datos_cl:
 			horarios = list()
@@ -219,7 +219,7 @@ def visualizar_pdf(request, id):
 	profesor = Profesor.objects.get(id=id)
 	instrumentos = Clase_Individual.objects.filter(profesor_id=id, alumno_id__activo=True)
 	actividades = Designacion.objects.filter(profesor_id=id)
-	datos_cl = Clase.objects.filter(profesor_id=id).order_by('catedra_id')
+	datos_cl = Clase.objects.filter(profesor_id=id).order_by('catedra_id', 'nivel_id', 'seccion_id')
 	clases = list()
 	for dato_cl in datos_cl:
 		horarios = list()

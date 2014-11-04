@@ -195,13 +195,10 @@ def buscar_editar_alumno(request, id):
 		clases_alumno = list()
 		for dato_cl in datos_cl:
 			horarios = list()
-			datos_h = Horario.objects.filter(clase_id=dato_cl.clase.id)
+			datos_h = Horario.objects.filter(clase_id=dato_cl.clase.id).order_by('dia_id')
 			for dato_h in datos_h:
 				horarios.append({'dia': str(dato_h.dia), 'inicio': str(dato_h.inicio), 'final': str(dato_h.final)})
 			clases_alumno.append({'id': dato_cl.id, 'clase_id':dato_cl.clase.id, 'catedra': dato_cl.clase.catedra.id, 'clase': str(dato_cl.clase), 'horarios': horarios})
-
-		# horarios = Horario.objects.all().order_by('clase__catedra', 'clase__nivel__id', 'clase__seccion__id')
-
 		template = 'editar_alumno.html'
 		return render(request, template, locals())
 	else:

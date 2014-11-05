@@ -1,18 +1,20 @@
 FALTANTE
 
+Reestructurar la base de datos con una tabla llamada agrupaciones para orquestas, coros, y la de actividades que sea para talleres, seccionales, y otros
+
+Tabla de instrumentos del profesor
+
+CONSTANCIA DE ESTUDIO
+CONSTANCIA DE TRABAJO
+
 mostrar el ESTADO de los alumnos en los reportes
+ENCABEZADOS E INFORMACION EN LOS REPORTES
 arreglar los ENCABEZADOS de los reportes en pdf
 
 
-Constancia de estudio
+---- VERIFICAR SIEMPRE ----
 
-
-Revisar que esten todas las Bitacoras
-ENCABEZADOS E INFORMACION EN LOS REPORTES
-
-
-Verificar que muestren los alumnos en las listas activos
-
+REVISAR QUE ESTEN TODAS LAS BITACORAS
 
 0 = error
 1 = todo bn
@@ -28,9 +30,6 @@ if (data.estado == 0) {
 }else if (data.estado == 3){
 	
 }
-
-
-Reestructurar la base de datos con una tabla para orquestas, otra para coros y una de voces, y la de actividades que sea para talleres, seccionales, y otros
 
 COROS
 Baby Los Guaritos

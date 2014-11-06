@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django_extensions',
     'actividades',
+    'agrupaciones',
     'alumnos',
     'clases',
     'inicio',
@@ -85,7 +86,8 @@ WSGI_APPLICATION = 'sistema.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME':'orquesta',
+        # 'NAME':'orquesta',
+        'NAME':'db_orquesta',
         'USER': 'admin',
         'PASSWORD': 'admin123',
         'HOST': 'localhost',

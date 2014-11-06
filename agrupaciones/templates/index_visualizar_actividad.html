@@ -1,0 +1,31 @@
+<div>
+	<form class="buscar_form form" name="form_Buscar" action="" method="post">
+		<h3>Visualizar Actividad</h3>
+		<fieldset>
+			<legend>Selecione una Actividad</legend>
+			<select id="actividad" class="list large" name="lstActivida">
+				<option value="">Seleccionar</option>
+			{% for actividad in actividades %}
+				<option value="{{actividad.id}}">{{actividad.tipo.nombre}} {{actividad.nombre}}</option>
+			{% endfor %}
+			</select>
+		</fieldset>
+	</form>
+</div>
+<div id="mostrar" class=""></div>
+{% block scripts_body %}
+<script>
+	var $actividad = $('select[name=lstActivida]')
+
+	$($actividad).on('change', buscarActividad)
+
+	function buscarActividad() {
+		var $id = $(this).val()
+		if (!$id) {
+			$('#mostrar').html('')
+		}else{
+			$('#mostrar').load('buscar-visualizar-actividad/'+ $id);
+		}
+	}
+</script>
+{% endblock scripts_body %}
